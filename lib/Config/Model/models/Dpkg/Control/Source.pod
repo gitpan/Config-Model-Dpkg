@@ -94,7 +94,7 @@ I<< Optional. Type list of uniline.  >>
 
 =head2 Standards-Version - Debian policy version number this package complies to
 
-This field indicates the debian policy version number this package complies to. I<< Optional. Type uniline. default: '3.9.3'.  >>
+This field indicates the debian policy version number this package complies to. I<< Optional. Type uniline. default: '3.9.4'.  >>
 
 =head2 Vcs-Browser - web-browsable URL of the VCS repository
 

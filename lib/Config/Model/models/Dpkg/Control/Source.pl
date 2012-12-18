@@ -136,13 +136,13 @@ area/section if the package is in the contrib or non-free archive areas.
         'value_type' => 'uniline',
         'summary' => 'Debian policy version number this package complies to',
         'warn_unless_match' => {
-          '3\\.9\\.3' => {
-            'msg' => 'Current standards version is 3.9.3',
+          '3\\.9\\.4' => {
+            'msg' => 'Current standards version is 3.9.4',
             'fix' => '$_ = undef; # restore default value'
           }
         },
         'match' => '\\d+\\.\\d+\\.\\d+(\\.\\d+)?',
-        'default' => '3.9.3',
+        'default' => '3.9.4',
         'type' => 'leaf',
         'description' => 'This field indicates the debian policy version number this package complies to'
       },

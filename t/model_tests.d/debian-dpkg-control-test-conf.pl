@@ -134,6 +134,10 @@ providing the following file:
         check => { 'source Build-Depends-Indep:1' => 'libclass-isa-perl | perl (<< 5.10.1-13)' },
         apply_fix => 1,
     },
+    {
+        # test for #692849, must not warn about missing libfoo dependency
+        name => 'dbg-dep',
+    },
 );
 
 my $cache_file = 't/model_tests.d/debian-dependency-cache.txt';

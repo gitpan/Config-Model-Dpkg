@@ -1,5 +1,7 @@
 clustalw => etch/non-free 1.83-1.2 lenny/non-free 2.0.9-1 squeeze/non-free 2.0.12-1 wheezy 2.1+lgpl-2 sid 2.1+lgpl-2 sid 2.1+lgpl-2+b1
+dh-autoreconf => squeeze 2 wheezy 7 sid 7
 dpkg => squeeze 1.15.8.12 wheezy 1.16.8 sid 1.16.8
+dpkg-dev => squeeze 1.15.8.13 squeeze-backports 1.16.1.2~bpo60+1 wheezy 1.16.9 sid 1.16.9
 frozen-bubble => etch 2.1.0-1 lenny 2.1.0-2 lenny 2.1.0-2+b1 squeeze 2.2.0-2 wheezy 2.2.0-2 sid 2.2.0-2 wheezy 2.2.0-2+b1 sid 2.2.0-2+b1
 gdm => etch 2.16.4-1 lenny 2.20.7-4lenny1 squeeze 2.20.11-4 wheezy 2.20.11-4
 hal => lenny 0.5.11-8 squeeze 0.5.14-3 wheezy 0.5.14-5 sid 0.5.14-5
@@ -22,6 +24,7 @@ libfile-slurp-perl => etch 9999.09-1 lenny 9999.12-2 squeeze 9999.13-1 wheezy 99
 libfltk1.1-dev => etch 1.1.7-3 lenny 1.1.9-6 squeeze 1.1.10-2+b1 wheezy 1.1.10-4 sid 1.1.10-4 wheezy 1.1.10-4+b1 sid 1.1.10-4+b1
 libfontconfig1-dev => lenny 2.6.0-3 backports/lenny 2.8.0-2~bpo50+1 squeeze 2.8.0-2.1 wheezy 2.8.0-3.1 sid 2.8.0-3.1
 libfontenc-dev => etch 1:1.0.2-2 lenny 1:1.0.4-3 squeeze 1:1.0.5-2 wheezy 1:1.1.0-1 sid 1:1.1.0-1
+libfoo => 
 libfreetype6-dev => lenny-security 2.3.7-2+lenny8 lenny 2.3.7-2+lenny8 squeeze 2.4.2-2.1+squeeze3 squeeze-p-u 2.4.2-2.1+squeeze4 squeeze-security 2.4.2-2.1+squeeze4 backports/squeeze 2.4.4-1~bpo60+1 wheezy 2.4.8-1 sid 2.4.8-1 wheezy 2.4.8-1+b1 sid 2.4.8-1+b1
 libfs-dev => etch 2:1.0.0-4 lenny 2:1.0.1-1 squeeze 2:1.0.2-1 squeeze 2:1.0.2-1+b1 wheezy 2:1.0.3-1 sid 2:1.0.3-1
 libgdk-pixbuf2.0-dev => wheezy 2.24.1-1 sid 2.24.1-1 experimental 2.25.2-1

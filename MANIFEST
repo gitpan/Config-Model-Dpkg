@@ -1,7 +1,6 @@
 Build
 Build.PL
 ChangeLog
-HOWTO.release
 lib/Config/Model/application.d/dpkg
 lib/Config/Model/application.d/dpkg-control
 lib/Config/Model/application.d/dpkg-copyright
@@ -40,11 +39,12 @@ lib/Config/Model/models/Dpkg/Source/Options.pl
 lib/Config/Model/models/Dpkg/Source/Options.pod
 MANIFEST			This list of files
 MANIFEST.SKIP
-MODELS
-README.pod
+META.json
+META.yml
 t/debian-dependency-check.t
 t/debian-dpkg.t
 t/model_tests.d/debian-dependency-cache.txt
+t/model_tests.d/debian-dpkg-control-examples/dbg-dep
 t/model_tests.d/debian-dpkg-control-examples/libclass-meta-perl
 t/model_tests.d/debian-dpkg-control-examples/libmodule-metadata-perl
 t/model_tests.d/debian-dpkg-control-examples/libpango-perl
@@ -108,5 +108,3 @@ t/model_tests.d/debian-dpkg-patch-test-conf.pl
 t/model_tests.d/debian-dpkg-test-conf.pl
 t/model_tests.t
 t/pod.t
-META.yml
-META.json

@@ -494,6 +494,12 @@ sub check_or_fix_pkg_name {
         }
     }
     
+    # check if this package is defined in current control file
+    if ($self->grab(step => "- - binary:$pkg", qw/mode loose autoadd 0/)) {
+        $logger->debug("dependency $pkg provided in control file") ;
+        return 1 ;
+    }
+
     my @dist_version = $self->get_pkg_versions($pkg) ;
     # if no pkg was found
     if (@dist_version == 0) {

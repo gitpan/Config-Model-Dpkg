@@ -24,7 +24,7 @@
         'compute' => {
           'undef_is' => '\'\'',
           'use_eval' => '1',
-          'formula' => 'require Software::License ;
+          'formula' => 'require Software::LicenseUtils ;
 my $h = { 
   short_name => &index( - ), 
   holder => \'foo\' 
@@ -32,7 +32,7 @@ my $h = {
 
 # no need to fail if short_name is unknown
 eval {
-  Software::License->new($h)->summary ; 
+  Software::LicenseUtils->new_from_short_name($h)->summary ; 
 } ;',
           'allow_override' => '1'
         },

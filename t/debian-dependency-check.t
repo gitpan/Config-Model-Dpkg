@@ -87,7 +87,7 @@ Build-Depends: debhelper, libsdl1.2, dpkg
 Build-Depends-Indep: libcpan-meta-perl, perl (>= 5.10) | libmodule-build-perl,
 Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
 Uploaders: Dominique Dumont <dominique.dumont@hp.com>
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: http://search.cpan.org/dist/Dist-Zilla-Plugins-CJM/
 
 Package: libdist-zilla-plugins-cjm-perl

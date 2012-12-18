@@ -12,15 +12,15 @@ specs to CANDIDATE spec.
 
 To edit a copyright file, go into your package development directory and run:
 
-  config-edit -application dpkg-copyright
+  cme edit dpkg-copyright
    
 To check you file run:
 
-  config-edit -application dpkg-copyright -ui none
+  cme check dpkg-copyright
     
 To upgrade your file from an old spec, run:
 
-  config-edit -application dpkg-copyright -ui none -save
+  cme migrate dpkg-copyright
 
 
 =head1 Elements
