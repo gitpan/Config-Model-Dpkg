@@ -105,7 +105,7 @@ pkg_dep: pkg_name dep_version arch_restriction(?) {
 
 arch_restriction: '[' arch(s) ']'
 dep_version: '(' oper version ')' { $return = [ $item{oper}, $item{version} ] ;} 
-pkg_name: /[\w\-\.]+/ 
+pkg_name: /[a-z0-9][a-z0-9\+\-\.]+/
 oper: '<<' | '<=' | '=' | '>=' | '>>'
 version: variable | /[\w\.\-~:+]+/
 eofile: /^\Z/

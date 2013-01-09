@@ -3,6 +3,7 @@ dh-autoreconf => squeeze 2 wheezy 7 sid 7
 dpkg => squeeze 1.15.8.12 wheezy 1.16.8 sid 1.16.8
 dpkg-dev => squeeze 1.15.8.13 squeeze-backports 1.16.1.2~bpo60+1 wheezy 1.16.9 sid 1.16.9
 frozen-bubble => etch 2.1.0-1 lenny 2.1.0-2 lenny 2.1.0-2+b1 squeeze 2.2.0-2 wheezy 2.2.0-2 sid 2.2.0-2 wheezy 2.2.0-2+b1 sid 2.2.0-2+b1
+gcc-4.6 => wheezy 4.6.3-11 sid 4.6.3-14
 gdm => etch 2.16.4-1 lenny 2.20.7-4lenny1 squeeze 2.20.11-4 wheezy 2.20.11-4
 hal => lenny 0.5.11-8 squeeze 0.5.14-3 wheezy 0.5.14-5 sid 0.5.14-5
 libalien-wxwidgets-perl => lenny 0.37-1 squeeze 0.50+dfsg-1 wheezy 0.54+dfsg-1 sid 0.54+dfsg-1

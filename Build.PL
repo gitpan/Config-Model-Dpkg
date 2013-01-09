@@ -90,7 +90,7 @@ my $build = $class->new(
             MailingList =>
               'https://lists.sourceforge.net/lists/listinfo/config-model-users',
             repository =>
-              'git://github.com/dod38fr/config-model.git',
+              'git://anonscm.debian.org/pkg-perl/packages/libconfig-model-dpkg-perl.git',
         },
     },
 

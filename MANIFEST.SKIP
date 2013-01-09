@@ -1,4 +1,9 @@
-^debian/
+^debian/copyright
+^debian/compat
+^debian/control
+^debian/rules
+^debian/source
+^debian/source/format
 ~$
 \.ptkdb$
 \.old$

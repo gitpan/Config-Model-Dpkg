@@ -85,7 +85,7 @@
       },
       "Config::Model::Dpkg" : {
          "file" : "lib/Config/Model/Dpkg.pm",
-         "version" : "2.031"
+         "version" : "2.032"
       },
       "Config::Model::Dpkg::Dependency" : {
          "file" : "lib/Config/Model/Dpkg/Dependency.pm",
@@ -99,9 +99,9 @@
          "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt"
       ],
       "repository" : {
-         "url" : "git://github.com/dod38fr/config-model.git"
+         "url" : "git://anonscm.debian.org/pkg-perl/packages/libconfig-model-dpkg-perl.git"
       },
       "x_MailingList" : "https://lists.sourceforge.net/lists/listinfo/config-model-users"
    },
-   "version" : "2.031"
+   "version" : "2.032"
 }

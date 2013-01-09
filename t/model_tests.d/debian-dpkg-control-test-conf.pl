@@ -27,7 +27,7 @@ providing the following file:
             'binary:libdist-zilla-plugins-cjm-perl Depends:0',
             '${misc:Depends}',
             'source Vcs-Browser' ,'http://anonscm.debian.org/gitweb/?p=pkg-perl/packages/libdist-zilla-plugins-cjm-perl.git',
-            'source Vcs-Git', 'git://git.debian.org/pkg-perl/packages/libdist-zilla-plugins-cjm-perl.git',
+            'source Vcs-Git', 'git://anonscm.debian.org/pkg-perl/packages/libdist-zilla-plugins-cjm-perl.git',
         },
         load_warnings => [ qr/dependency/, qr/dual life/, (qr/dependency/) x 2, 
                           qr/libmodule-build-perl \(>= 0.36\) \| perl \(>= 5.8.8\)/,
@@ -137,6 +137,10 @@ providing the following file:
     {
         # test for #692849, must not warn about missing libfoo dependency
         name => 'dbg-dep',
+    },
+    {
+        # test for #696768, Built-Using field
+        name => 'built-using',
     },
 );
 

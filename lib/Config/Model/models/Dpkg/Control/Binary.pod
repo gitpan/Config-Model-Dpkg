@@ -85,6 +85,20 @@ I<< Optional. Type list of uniline.  >>
 
 I<< Optional. Type list of uniline.  >>
 
+=head2 Built-Using
+
+Some binary packages incorporate parts of other packages when built but do not have to depend on those packages. Examples include linking with static libraries or incorporating source code from another package during the build. In this case, the source packages of those other packages are a required part of the complete source (the binary package is not reproducible without them).
+
+A Built-Using field must list the corresponding source package for any such binary package incorporated during the build, including an "exactly equal" ("=") version relation on the version that was used to build that binary package.
+
+A package using the source code from the gcc-4.6-source binary package built from the gcc-4.6 source package would have this field in its control file:
+
+     Built-Using: gcc-4.6 (= 4.6.0-11)
+
+A package including binaries from grub2 and loadlin would have this field in its control file:
+
+     Built-Using: grub2 (= 1.99-9), loadlin (= 1.6e-1)I<< Optional. Type list of uniline.  >>
+
 =head2 Package-Type - The type of the package, if not a regular Debian one
 
 If this field is present, the package is not a regular Debian package, but either a udeb generated for the Debian installer or a tdeb containing translated debconf strings.I<< Optional. Type enum. choice: 'tdeb', 'udeb'.  >>

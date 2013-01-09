@@ -1,0 +1,86 @@
+libconfig-model-dpkg-perl (2.032) unstable; urgency=low
+
+  [ Salvatore Bonaccorso ]
+  * Fix typos in package description.
+    Thanks to Stephen Kitt <steve@sk2.org> (Closes: #696630)
+  * Correct regexp for allowed package names.
+    According to Debian policy "5.6.1 Source", package names must consist
+    only of lower case letters (a-z), digits (0-9), plus (+) and minus (-)
+    signs, and periods (.). They must be at least two characters long and
+    must start with an alphanumeric character.
+    Thanks to Stephen Kitt <steve@sk2.org> (Closes: #696631)
+  * Add support for Built-Using field (Closes: #696768)
+  * Expand testsuite to check for binary package using Built-Using field
+  * Add description for Built-Using field
+  * Warn if Built-Using field is not filled via substvars.
+    Add a regular expression matching the allowed variable substitution
+    names for Built-Using field and warn unless it matches. See
+    deb-substvars(5).
+    Expand the built-using test using a 'fake' variable substitution.
+  * Fix FTBFS if no writable $HOME is available during tests.
+    Add overrides for dh_clean and dh_auto_test to provide a writable $HOME
+    during tests.
+  * Use posix character classes for warn_unless regular expression
+  * Change Vcs-Git to canonical URI (git://anonscm.debian.org)
+
+  [ Dominique Dumont ]
+  * manifest.skip: ignore HOWTO.release, *.bak, *.tar.gz
+  * HOWTO.release: added instructions to clean repo
+  * control source model: fix computed value for VCS-Git to use
+    anonscm.debian.org
+  * removed old changelog
+  * Build.PL: updated repo URL (for CPAN)
+  * MANIFEST.SKIP: updated to ship debian/changelog to CPAN
+  * fix build-depends-on-1-revision lintian warning
+
+ -- Dominique Dumont <dod@debian.org>  Wed, 09 Jan 2013 18:46:41 +0100
+
+libconfig-model-dpkg-perl (2.031) unstable; urgency=low
+
+  * adapted Dpkg copyright model to new libsoftware-license-perl
+    (Closes: #696140)
+  * Dependency: check if dependency is provided within the control
+    file (Closes: #692849)
+  * control: depends on libsoftware-license-perl ( >= 0.103005-1)
+
+ -- Dominique Dumont <dod@debian.org>  Mon, 17 Dec 2012 19:44:45 +0100
+
+libconfig-model-dpkg-perl (2.030) unstable; urgency=low
+
+  * Team upload.
+  * Set Standards-Version to 3.9.4 for the dpkg-control model.
+  * Bump Standards-Version to 3.9.4 for the package itself.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 03 Nov 2012 15:44:57 +0100
+
+libconfig-model-dpkg-perl (2.029) unstable; urgency=low
+
+  * Team upload.
+  * Add missing Build-Depends-Indep on lintian.
+    Fix FTBFS "Can't locate Lintian/Relation.pm in @INC" during tests.
+    Thanks to Angel Abad <angel@debian.org> (Closes: #691905)
+  * Fix spelling-error-in-copyright lintian warning.
+    Fix "spelling-error-in-copyright GNU Lesser Public License GNU Lesser
+    General Public License" lintian warning.
+
+ -- Salvatore Bonaccorso <carnil@debian.org>  Wed, 31 Oct 2012 12:33:52 +0100
+
+libconfig-model-dpkg-perl (2.028) unstable; urgency=low
+
+  * updated doc embedded in dpkg-copyright model
+  * control: added build-dep on libfile-copy-recursive
+    to fix a FTBS
+
+ -- Dominique Dumont <dod@debian.org>  Tue, 09 Oct 2012 14:04:16 +0200
+
+libconfig-model-dpkg-perl (2.027) unstable; urgency=low
+
+  * re-release to unstable
+
+ -- Dominique Dumont <dod@debian.org>  Sun, 07 Oct 2012 10:55:27 +0200
+
+libconfig-model-dpkg-perl (2.026) experimental; urgency=low
+
+  * Initial Release. (Closes: #689241)
+
+ -- Dominique Dumont <dod@debian.org>  Sun, 07 Oct 2012 10:54:11 +0200

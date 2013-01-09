@@ -175,6 +175,32 @@ A package may specify an architecture wildcard. Architecture wildcards are in th
         },
         'type' => 'list'
       },
+      'Built-Using',
+      {
+        'cargo' => {
+          'value_type' => 'uniline',
+          'warn_unless_match' => {
+            '\\$\\{[[:alnum:]][[:alnum:]\\-:]+\\}' => {
+              'msg' => 'Built-Using should be filled with a substvar.'
+            }
+          },
+          'class' => 'Config::Model::Dpkg::Dependency',
+          'type' => 'leaf'
+        },
+        'duplicates' => 'warn',
+        'type' => 'list',
+        'description' => 'Some binary packages incorporate parts of other packages when built but do not have to depend on those packages. Examples include linking with static libraries or incorporating source code from another package during the build. In this case, the source packages of those other packages are a required part of the complete source (the binary package is not reproducible without them).
+
+A Built-Using field must list the corresponding source package for any such binary package incorporated during the build, including an "exactly equal" ("=") version relation on the version that was used to build that binary package.
+
+A package using the source code from the gcc-4.6-source binary package built from the gcc-4.6 source package would have this field in its control file:
+
+     Built-Using: gcc-4.6 (= 4.6.0-11)
+
+A package including binaries from grub2 and loadlin would have this field in its control file:
+
+     Built-Using: grub2 (= 1.99-9), loadlin (= 1.6e-1)'
+      },
       'Package-Type',
       {
         'value_type' => 'enum',
