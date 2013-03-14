@@ -88,7 +88,8 @@ depend: pkg_dep | variable
 
 alt_depend: '|' depend  
 
-variable: /\${[\w:\-]+}/
+# For the allowed stuff after ${foo}, see #702792
+variable: /\${[\w:\-]+}[\w\.\-~+]*/
 
 pkg_dep: pkg_name dep_version arch_restriction(?) {
     # pass dep_version by ref so they can be modified
@@ -321,8 +322,10 @@ sub check_perl_lib_dep {
     my @dep_name_as_perl = Module::CoreList->find_modules(qr/^$pname$/i) ; 
     return $ret unless @dep_name_as_perl;
 
+    return $ret if defined $dep_v && $dep_v =~ m/^\$/ ;
+
     my ($cpan_dep_v, $epoch_dep_v) ;
-    ($cpan_dep_v, $epoch_dep_v) = reverse split /:/ ,$dep_v  if defined $dep_v ;
+    ($cpan_dep_v, $epoch_dep_v) = reverse split /:/ ,$dep_v if defined $dep_v ;
     my $v_decimal = Module::CoreList->first_release( 
         $dep_name_as_perl[0], 
         version->parse( $cpan_dep_v )

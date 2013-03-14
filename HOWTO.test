@@ -1,0 +1,68 @@
+Here are some tips to test this module without building debian package:
+
+* test all:
+
+  prove -l t/
+  perl -Ilib t/*.t
+
+* single test
+
+  prove -l t/debian-dpkg.t
+  perl -Ilib t/debian-dpkg.t
+
+* pick test case for t/model_test.t
+
+model_test can be quite long to execute as it runs several test cases
+(in fact one for every example file located in t/model_test.d/*-examples)
+
+Syntax is:
+
+  perl -Ilib t/model_test.t <flag> <group> <example>
+
+flag can be:
+- t: add more verbose trace on STDOUT
+- l: print logs configured in ~/.log4config-model
+- e: print stack trace when exceptions are thrown
+
+To find group and example, run 
+  perl -Ilib t/model_tests.t |grep 'Beginning subtest'
+
+Each subtest name can be used as group and example.
+
+For instance:
+
+ $ perl -Ilib t/model_tests.t x debian-dpkg-control sdlperl
+ok 1 - compiled
+# Beginning debian-dpkg-control test (t/model_tests.d/debian-dpkg-control-test-conf.pl)
+# debian-dpkg-control uses Dpkg::Control model on file control
+# Beginning subtest debian-dpkg-control sdlperl
+ok 2 - Copied debian-dpkg-control example sdlperl
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+ok 3 - Read configuration and created instance with init() method with warning check 
+ok 4 - load called
+ok 5 - apply_fixes called
+ok 6 - Ran dump_tree
+ok 7 - Dumped debian-dpkg-control config tree in full mode
+ok 8 - Dumped debian-dpkg-control config tree in custom mode
+ok 9 - check binary:libsdl-perl Depends:2 value ()
+ok 10 - debian-dpkg-control write back done
+ok 11 - Created instance debian-dpkg-control-test-sdlperl-w
+ok 12 - Dumped debian-dpkg-control 2nd config tree in custom mode
+ok 13 - compare original debian-dpkg-control custom data with 2nd instance custom data
+ok 14 - check that original debian-dpkg-control file was not clobbered
+# End of subtest debian-dpkg-control sdlperl
+# End of debian-dpkg-control test
+Unhandled type: GLOB at /usr/share/perl5/Devel/Cycle.pm line 107.
+ok 15 - test memory cycle
+1..15
+writing back cache file
+
+The 'x' flag is ignored
+
+You can run a whole group by omitting the subtest name:
+
+  perl -Ilib t/model_tests.t x debian-dpkg-control
+
+

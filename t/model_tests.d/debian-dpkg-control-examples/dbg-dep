@@ -18,7 +18,8 @@ Package: libfoo
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends},
+    libcompress-raw-zlib-perl (>= ${source:Upstream-Version})
 Description: Simple DirectMedia Layer
  SDL is a library that allows programs portable low level access to
  a video framebuffer, audio output, mouse, and keyboard.

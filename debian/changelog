@@ -1,3 +1,12 @@
+libconfig-model-dpkg-perl (2.033) unstable; urgency=low
+
+  * bail out of of check_perl_lib_dep if the version contains a
+    variable (Closes: #698876) (Tx gregoa for the help)
+  * Allow version with variables and appended stuff (e.g. ${foo}.1~ )
+    (Closes: #702792)
+
+ -- Dominique Dumont <dod@debian.org>  Thu, 14 Mar 2013 19:25:31 +0100
+
 libconfig-model-dpkg-perl (2.032) unstable; urgency=low
 
   [ Salvatore Bonaccorso ]

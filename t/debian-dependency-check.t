@@ -93,7 +93,7 @@ Homepage: http://search.cpan.org/dist/Dist-Zilla-Plugins-CJM/
 Package: libdist-zilla-plugins-cjm-perl
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, libcpan-meta-perl ,
- perl (>= 5.10.1), dpkg (>= 0.01), perl-modules
+ perl (>= 5.10.1), dpkg (>= 0.01), perl-modules,  dpkg (<< ${source:Version}.1~)
 Description: collection of CJM's plugins for Dist::Zilla
  Collection of Dist::Zilla plugins. This package features the 
  following [snip]  

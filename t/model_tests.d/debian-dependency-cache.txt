@@ -10,6 +10,7 @@ libalien-wxwidgets-perl => lenny 0.37-1 squeeze 0.50+dfsg-1 wheezy 0.54+dfsg-1 s
 libatk1.0-dev => lenny 1.22.0-1 backports/lenny 1.30.0-1~bpo50+1 squeeze 1.30.0-1 wheezy 2.2.0-2 sid 2.2.0-2 wheezy 2.2.0-2+b1 sid 2.2.0-2+b1 experimental 2.3.93-1
 libcairo-perl => lenny 1.060-1 squeeze 1.070-1 wheezy 1.090-1 sid 1.090-1
 libclass-isa-perl => wheezy 0.36-3 sid 0.36-3
+libcompress-raw-zlib-perl => squeeze 2.026-1 wheezy 2.052-1 sid 2.055-1
 libconfig-model-cursesui-perl => squeeze 1.103-1 wheezy 1.104-1 sid 1.104-1
 libconfig-model-perl => squeeze 1.205-1 wheezy 1.244-1 sid 1.247-1
 libconfig-model-tkui-perl => squeeze 1.310-1 wheezy 1.324-1 sid 1.324-1

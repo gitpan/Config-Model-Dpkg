@@ -1,6 +1,7 @@
 Build
 Build.PL
 debian/changelog
+HOWTO.test
 lib/Config/Model/application.d/dpkg
 lib/Config/Model/application.d/dpkg-control
 lib/Config/Model/application.d/dpkg-copyright
