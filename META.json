@@ -85,7 +85,7 @@
       },
       "Config::Model::Dpkg" : {
          "file" : "lib/Config/Model/Dpkg.pm",
-         "version" : "2.033"
+         "version" : "2.034"
       },
       "Config::Model::Dpkg::Dependency" : {
          "file" : "lib/Config/Model/Dpkg/Dependency.pm",
@@ -103,5 +103,5 @@
       },
       "x_MailingList" : "https://lists.sourceforge.net/lists/listinfo/config-model-users"
    },
-   "version" : "2.033"
+   "version" : "2.034"
 }

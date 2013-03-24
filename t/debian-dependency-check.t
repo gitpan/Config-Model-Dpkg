@@ -30,13 +30,14 @@ use Log::Log4perl qw(:easy) ;
 use File::Path ;
 use File::Copy ;
 use Test::Warn ;
+use 5.10.0;
 
 eval { require AptPkg::Config ;} ;
 if ( $@ ) {
     plan skip_all => "AptPkg::Config is not installed";
 }
 elsif ( -r '/etc/debian_version' ) {
-    plan tests => 35;
+    plan tests => 47;
 }
 else {
     plan skip_all => "Not a Debian system";
@@ -116,13 +117,70 @@ open(my $control_h,"> $control_file" ) || die "can't open $control_file: $!";
 print $control_h $control_text ;
 close $control_h ;
 
+{
+
+# instance to check one dependency at a time
+my $unit = $model->instance (
+    root_class_name => 'Dpkg::Control',
+    root_dir        => $wr_dir,
+    # skip_read       => 1,
+    instance_name   => "unittest",
+);
+
+warning_like {
+    $unit->config_root->init ;
+}
+ [ qr/is unknown/, qr/unnecessary/, (qr/dual life/) , qr/unnecessary/,
+   ( qr/dual life/) x 2 , (qr/unnecessary/) x 1 ] ,
+  "test BDI warn on unittest instance";
+
+my $c_unit = $unit->config_root ;
+my $dep_value = $c_unit->grab("binary:dummy Depends:0");
+warning_like {
+    $dep_value->store('perl') ;
+}
+ [ qr/better written/ ] ,
+  "test warn on perl dep";
+is($dep_value->_pending_store, 0,"check that no pending store is left") ;
+
+is($dep_value->fetch, 'perl', "check stored dependency value") ;
+
+warning_like {
+    $dep_value->store('perl (  >= 5.6.0)') ;
+}
+ [ qr/unnecessary/ ] ,
+  "test warn on perl dep with old version";
+
+is($dep_value->_pending_store, 0,"check that no pending store is left") ;
+
+my $ok_cb = sub {is($_[0],0,"check perl (>= 5.6.0) dependency: no older version"); };
+$dep_value->check_versioned_dep( $ok_cb, ['perl','>=','5.6.0'] ) ;
+
+
+# $dep_value->store('libcpan-meta-perl') ;
+# exit ;
+my $dep = [ ['libcpan-meta-perl']] ; 
+my $ret = $dep_value->check_depend_chain (AnyEvent->condvar,0, $dep);
+is($ret, 0, "check dual life of libcpan-meta-perl") ;
+
+# exit ;
+
+my $dep2 = [ [qw/perl >= 5.10/], 'libmodule-build-perl'] ; 
+my $ret2 = $dep_value->check_depend_chain (AnyEvent->condvar,0, $dep);
+is($ret, 0, "check dual life of perl | libmodule-build-perl") ;
+
+}
+
 my $inst = $model->instance (
     root_class_name => 'Dpkg::Control',
     root_dir        => $wr_dir,
     instance_name   => "deptest",
 );
-warning_like { $inst->config_root->init ; ; }
- [ qr/is unknown/, qr/unnecessary/, (qr/dual life/) , qr/unnecessary/, 
+
+warning_like {
+    $inst->config_root->init ;
+}
+ [ qr/is unknown/, qr/unnecessary/, (qr/dual life/) , qr/unnecessary/,
    ( qr/dual life/) x 2 , (qr/unnecessary/) x 1 ] ,
   "test BDI warn";
 
@@ -138,11 +196,15 @@ if ($trace) {
 my $perl_dep = $control->grab("binary:libdist-zilla-plugins-cjm-perl Depends:3");
 is($perl_dep->fetch,"perl (>= 5.10.1)","check dependency value from config tree");
 
-my @ret = $perl_dep->check_versioned_dep(['perl','>=','5.28.1']) ;
-is($ret[0],1,"check perl (>= 5.28.1) dependency: has older version");
+my @ret = $perl_dep->check_versioned_dep(
+    sub { is($_[0],1,"check perl (>= 5.28.1) dependency: has older version");},
+    ['perl','>=','5.28.1']
+) ;
 
-@ret = $perl_dep->check_versioned_dep(['perl','>=','5.6.0']) ;
-is($ret[0],0,"check perl (>= 5.6.0) dependency: no older version");
+@ret = $perl_dep->check_versioned_dep(
+    sub {is($_[0],0,"check perl (>= 5.6.0) dependency: no older version"); },
+    ['perl','>=','5.6.0']
+) ;
 
 my $dpkg_dep = $control->grab("source Build-Depends:2");
 is($dpkg_dep->fetch,"dpkg",'check dpkg value') ;
@@ -196,11 +258,13 @@ $inst-> clear_changes ;
 # test fixes
 is($perl_dep->has_fixes,1, "test presence of fixes");
 $perl_dep->apply_fixes;
+is($perl_dep->fetch,'${perl:Depends}',"check fixed dependency value");
 is($perl_dep->has_fixes,0, "test that fixes are gone");
-@msgs = $perl_dep->warning_msg ;
-is_deeply(\@msgs,[],"check that warnings are gone");
+is($perl_dep->has_warning,0,"check that warnings are gone");
 
-is($inst->c_count, 1,"check that fixes are tracked with notify changes") ;
+is($inst->c_count, 2,"check that fixes are tracked with notify changes") ;
+print scalar $inst->list_changes,"\n" if $trace ;
+ 
 
 my $perl_bdi = $control->grab("source Build-Depends-Indep:1");
 
@@ -223,12 +287,15 @@ is($perl_bdi->has_fixes,2, "test presence of fixes");
 {
     local $Config::Model::Value::nowarning = 1 ;
     $perl_bdi->apply_fixes;
+    ok(1,"apply_fixes done");
 }
 
 is($perl_bdi->has_fixes,0, "test that fixes are gone");
-@msgs = $perl_bdi->warning_msg ;
-is_deeply(\@msgs,[],"check that warnings are gone");
+is($perl_bdi->has_warning,0,"check that warnings are gone");
 
+is($perl_bdi->fetch,"perl","check fixed B-D-I dependency value");
+
+print scalar $inst->list_changes,"\n" if $trace ;
 is($inst->c_count, 1,"check that fixes are tracked with notify changes") ;
 
 memory_cycle_ok($model);

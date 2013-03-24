@@ -27,6 +27,7 @@ use vars qw/$test_filter/ ;
 $test_filter = ''; # reserved for tests
 
 my $logger = get_logger("Tree::Element::Value::Dependency") ;
+my $async_log = get_logger("Async::Value::Dependency") ;
 
 # initialise the global config object with the default values
 $_config->init;
@@ -42,46 +43,16 @@ my $apt_cache = AptPkg::Cache->new ;
 # end black magic
 
 extends qw/Config::Model::Value/ ;
-use vars qw/%cache/ ;
-
-# Set up persistence
-my $cache_file_name = $ENV{HOME}.'/.config_model_depend_cache' ;
-
-# this condition is used during tests
-if (not %cache) {
-    tie %cache => 'DB_File', $cache_file_name, 
-} 
-
-# required to write data back to DB_File
-END { 
-    untie %cache ;
-}
 
 # when apply_fix is used ($arg[1]), this grammer will modify inline
 # the dependency value through the value ref ($arg[2])
 my $grammar = << 'EOG' ;
 
+# called with $self,$pending_check,$apply_fix, \@fixed_dep
 check_depend: depend alt_depend(s?) eofile { 
-    # cannot use %item with quantifier
-    my @dep_refs ;
-    my $ret = 1 ;
-    
-    foreach my $d ($item{depend}, @{$item[2]}) {
-        if (ref $d) {
-            my @a = @$d ;
-            $ret &&= shift @a ; # remove leading return value
-            push @dep_refs, \@a ;
-        }
-        else {
-            push @dep_refs, $d ;
-        }
-    }
-    
-    $ret &&= $arg[0]->check_depend_chain( $arg[1], \@dep_refs ) ;
-    my $vref = $arg[2] ;
-    $$vref   = $arg[0]->struct_to_dep(@dep_refs) ; 
-
-    $return  = $ret && ( $item[1] ? 1 : 0 ) ; 
+    @{$arg[3]} = ($item{depend}, @{$item[2]}) ;
+    $arg[0]->check_depend_chain( @arg[1..3] ) ;
+    $return = 1;
   }
 
 depend: pkg_dep | variable
@@ -94,14 +65,14 @@ variable: /\${[\w:\-]+}[\w\.\-~+]*/
 pkg_dep: pkg_name dep_version arch_restriction(?) {
     # pass dep_version by ref so they can be modified
     my @dep_info = ( $item{pkg_name}, @{ $item{dep_version} } ) ;
-    my $ok = $arg[0]->check_or_fix_dep( $arg[1], \@dep_info ) ;
-    $return = [ $ok, @dep_info ];
+    $arg[0]->check_or_fix_dep( @arg[1..2], \@dep_info) ;
+    $return = \@dep_info ;
    } 
  | pkg_name arch_restriction(?) {
     my @dep_info = ( $item{pkg_name} ) ;
-    $arg[0]->check_or_fix_pkg_name($arg[1], \@dep_info) ;
-    $arg[0]->check_or_fix_essential_package($arg[1], \@dep_info) ;
-    $return = [ 1 , @dep_info ] ; 
+    $arg[0]->check_or_fix_pkg_name($arg[2], \@dep_info) ;
+    $arg[0]->check_or_fix_essential_package($arg[2], \@dep_info) ;
+    $return = \@dep_info ;
    }
 
 arch_restriction: '[' arch(s) ']'
@@ -129,11 +100,28 @@ sub dep_parser {
 sub check_value {
     my $self = shift ;
     my %args = @_ > 1 ? @_ : (value => $_[0]) ;
-    my $value = $args{value} ;
-    my $quiet = $args{quiet} || 0 ;
-    my $silent = $args{silent} || 0 ;
-    my $apply_fix = $args{fix} || 0 ;
+    my $cb = delete $args{callback} || sub {} ;
+    my $my_cb = sub {
+        $self->check_dependency(@_, callback => $cb) ;
+    } ;
     
+    $args{fix} //= 0;
+    $self->SUPER::check_value(%args, callback => $my_cb) ;
+
+}
+
+sub check_dependency {
+    my $self = shift;
+    my %args = @_ ;
+
+    my ($value, $check, $silent, $notify_change, $ok, $callback,$apply_fix) 
+        = @args{qw/value check silent notify_change ok callback fix/} ;
+
+    # check_value is always called with a callback. This callback must
+    # must called *after* all aysnchronous calls are done (which depends on the
+    # packages listed in the dependency)
+    my $pending_check = AnyEvent->condvar ;
+
     # value is one dependency, something like "perl ( >= 1.508 )"
     # or exim | mail-transport-agent or gnumach-dev [hurd-i386]
 
@@ -142,44 +130,52 @@ sub check_value {
     # to get package list
     # wget -q -O - 'http://qa.debian.org/cgi-bin/madison.cgi?package=perl-doc&text=on'
 
-    $self->SUPER::check_value(%args) ;
     $value = $self->{data} if $apply_fix ; # check_value may have modified data in this case
-    my $e_list = $self->{error_list} ;
+
+    my $old = $value ;
+    my @fixed_dep ; # filled by callback and used when applying fixes
     
-    my $prd_check ;
-    if (defined $value) {
-        my $old = $value ;
-        $logger->debug("check_value '$value', calling check_depend with Parse::RecDescent");
-        $prd_check = dep_parser->check_depend ( $value,1,$self,$apply_fix, \$value) ; 
+    my $on_check_all_done = sub {
         if ($logger->is_debug) {
+            $async_log->debug("in check_dependency callback for ",$self->element_name);
             my $new = $value // '<undef>' ;
-            $logger->debug(" '$old' done".($apply_fix ? " changed to '$new'" : ''));
+            $logger->debug("'$old' done".($apply_fix ? " changed to '$new'" : ''));
         }
-        push @$e_list,"dependency '$value' does not match grammar" unless defined $prd_check ;
+
+        # "ideal" dependency is always computed, but it does not always change
+        my $new = $self->struct_to_dep(@fixed_dep) ;
+
+        {
+            no warnings 'uninitialized';
+            $self->_store_fix($old, $new) if $apply_fix and $new ne $old;
+        }
+        $callback->(%args) if $callback ;
+        $pending_check->send ;
+    } ;
+    
+    $async_log->debug("begin for ",$self->element_name) if $async_log->debug;
+    $pending_check->begin($on_check_all_done) ;
+    
+    if (defined $value) {
+        $logger->debug("'$value', calling check_depend with Parse::RecDescent");
+        dep_parser->check_depend ( $value,1,$self,$pending_check,$apply_fix, \@fixed_dep) 
+            // $self->add_error("dependency '$value' does not match grammar") ;
+
     }
     
-    # my ($ok,$new_value) = defined $prd_check ? @$prd_check : () ;
-    #$self->store(value => $value, check => 'no') if $apply_fix ; 
-    $self->fix_value(\$self->{data}, $value) if $apply_fix ; 
+    $async_log->debug("waiting end for ",$self->element_name) if $async_log->debug;
+    $pending_check->end; 
+    $async_log->debug("end for ",$self->element_name) if $async_log->debug;
     
-    return wantarray ? @$e_list : scalar @$e_list ? 0 : 1 ;
-}
-
-#
-# New subroutine "fix_value" extracted - Wed Jun 27 14:33:07 2012.
-#
-sub fix_value {
-    my ($self, $v_ref, $new_v) = @_ ;
-
-    my $old_v = $$v_ref;
-    $$v_ref = $new_v ;
-    no warnings 'uninitialized' ;
-    $self->notify_change(old => $old_v, new => $$v_ref, note => 'applied fix') 
-        if $old_v ne $new_v;
+    $async_log->debug("waiting until all results for ",$self->element_name," are back")
+        if $async_log->debug;
+    $pending_check->recv; # block until all checks are done
+    $async_log->debug("all results for ",$self->element_name, " are back") 
+        if $async_log->debug;
 }
 
 sub check_debhelper {
-    my ($self,$apply_fix, $depend) = @_ ;
+    my ($self, $apply_fix, $depend) = @_ ;
     my ( $dep_name, $oper, $dep_v ) = @$depend ;
 
     my $dep_string = $self->struct_to_dep($depend) ;
@@ -208,8 +204,8 @@ sub check_debhelper {
     else {
         $self->{nb_of_fixes}++ ;
         my $msg = "should be (>= $compat) not ($show_rel) because compat is $compat" ;
-        push @{$self->{warning_list}} , $msg ;
-        $logger->info("will warn: $msg");
+        $self->add_warning( $msg );
+        $logger->info("will warn: $msg (fix++)");
     }
 }
 
@@ -223,8 +219,8 @@ while (@deb_releases) {
 }
 
 # called in check_versioned_dep and in Parse::RecDescent grammar 
-sub get_pkg_versions {
-    my ($self,$pkg) = @_ ;
+sub xxget_pkg_versions {
+    my ($self,$cb,$pkg) = @_ ;
     $logger->debug("get_pkg_versions: called with $pkg");
 
     # check if Debian has version older than required version
@@ -272,39 +268,45 @@ sub struct_to_dep {
 
 # will modify @input (array of ref) when applying fix
 sub check_depend_chain {
-    my ($self, $apply_fix, $input) = @_ ;
+    my ($self, $pending_check, $apply_fix, $input) = @_ ;
     
     my ($actual_dep, $skip) = $self->struct_to_dep (@$input);
     my $ret = 1 ;
+
     return 1 unless defined $actual_dep; # may have been cleaned during fix
-    $logger->debug("check_depend_chain: called with $actual_dep with apply_fix $apply_fix");
+    $logger->debug("called with $actual_dep with apply_fix $apply_fix");
 
     if ($skip) {
         $logger->debug("skipping '$actual_dep': has a < relation ship") ;
         return $ret ;
     }
     
+    $async_log->debug("begin check alternate deps for $actual_dep") ;
+    $pending_check->begin;
     foreach my $depend (@$input) {
         if (ref ($depend)) {
             # is a dependency (not a variable a la ${perl-Depends})
             my ($dep_name, $oper, $dep_v) = @$depend ;
-            $logger->debug("check_depend_chain: scanning dependency $dep_name"
+            $logger->debug("scanning dependency $dep_name"
                 .(defined $dep_v ? " $dep_v" : ''));
             if ($dep_name =~ /lib([\w+\-]+)-perl/) {
                 my $pname = $1 ;
+                # AnyEvent condvar is involved in this method
                 $ret &&= $self->check_perl_lib_dep ($apply_fix, $pname, $actual_dep, $depend,$input);
                 last;
             }
         }
     }
+    $async_log->debug("waiting end check alternate deps for $actual_dep") ;
+    $pending_check->end ;
+    $async_log->debug("end check alternate deps for $actual_dep") ;
     
     if ($logger->is_debug and $apply_fix) {
         my $str = $self->struct_to_dep(@$input) ;
         $str //= '<undef>' ;
-        $logger->debug("toto new dependency is $str");
+        $logger->debug("new dependency is $str");
     }
     
-    #exit if $input[0][1] =~ /module/ ;
     return $ret ;
 }
 
@@ -312,6 +314,7 @@ sub check_depend_chain {
 # does modify $input when applying fix
 sub check_perl_lib_dep {
     my ($self, $apply_fix, $pname, $actual_dep, $depend, $input) = @_;
+    $logger->debug("called with $actual_dep with apply_fix $apply_fix");
 
     my ( $dep_name, $oper, $dep_v ) = @$depend;
     my $ret = 1;
@@ -346,82 +349,131 @@ sub check_perl_lib_dep {
     # libcpan-meta-perl | perl (>= 5.13.10)
     # because buildd will use the first available alternative
 
-    my ($has_older_perl) = $self->check_versioned_dep( ['perl', '>=', $v_normal] );
+    # here we have 3 async consecutive calls to check_versioned_dep 
+    # and get_available_version. Must block and return once they are done
+    # hence the condvar
+    my $perl_dep_cv = AnyEvent->condvar ;
+    
     my @ideal_perl_dep = qw/perl/ ;
-    push @ideal_perl_dep, '>=', $v_normal if $has_older_perl;
+    my @ideal_lib_dep ;
     my @ideal_dep_chain = (\@ideal_perl_dep);
 
-    my ($has_older_lib) = defined $dep_v ? $self->check_versioned_dep( $depend ) : (0);
-    my @ideal_lib_dep ;
-    if ($has_older_perl) {
-        push @ideal_lib_dep, $dep_name ;
-        push @ideal_lib_dep, '>=',  $dep_v if $has_older_lib;
-    }
+    my ($check_perl_lib, $get_perl_versions, $on_get_perl_versions) ;
     
-    my ($has_info, %perl_version) = $self->get_available_version('perl');
-    return $ret unless $has_info ; # info not yet available
+    my $on_perl_check_done =  sub {
+        my $has_older_perl = shift ;
+        $async_log->debug("on_perl_check_done called") ;
+        push @ideal_perl_dep, '>=', $v_normal if $has_older_perl;
+        $check_perl_lib->($has_older_perl) ;
+    } ;
 
-    my $has_older_perl_in_sid = ( $vs->compare( $v_normal, $perl_version{sid} ) < 0 ) ? 1 : 0;
-    $logger->debug(
-        "check_depend_chain: perl $v_normal is",
-        $has_older_perl_in_sid ? ' ' : ' not ',
-        "older than perl in sid ($perl_version{sid})"
-    );
+    $check_perl_lib = sub {
+        my $has_older_perl = shift;
+        $async_log->debug( "check_perl_lib called with dep_v " . ( $dep_v // 'undef' ) );
 
-    my @ordered_ideal_dep = $has_older_perl_in_sid ? 
-        ( \@ideal_perl_dep, \@ideal_lib_dep ) :
-        ( \@ideal_lib_dep, \@ideal_perl_dep ) ;
-    my $ideal_dep = $self->struct_to_dep( @ordered_ideal_dep );
+        my $on_perl_lib_check_done = sub {
+            my $has_older_lib = shift;
+            $async_log->debug("on_perl_lib_check_done called");
+            if ($has_older_perl) {
+                push @ideal_lib_dep, $dep_name;
+                push @ideal_lib_dep, '>=', $dep_v if $has_older_lib;
+            }
+            $get_perl_versions->();
+        };
 
-    if ( $actual_dep ne $ideal_dep ) {
-        if ($apply_fix) {
-            @$input = @ordered_ideal_dep ; # notify_change called in check_value
-            $logger->info("fixed dependency with: $ideal_dep -> @$depend");
+        if ( defined $dep_v ) {
+            $self->check_versioned_dep( $on_perl_lib_check_done, $depend );
         }
         else {
-            $self->{nb_of_fixes}++;
-            my $msg = "Dependency of dual life package should be '$ideal_dep' not '$actual_dep'";
-            push @{ $self->{warning_list} }, $msg;
-            $logger->info("will warn: $msg");
+            $on_perl_lib_check_done->(0);
         }
-        $ret = 0;
-    }
-   return $ret ;
+    };
+
+    $get_perl_versions = sub {
+        $self->get_available_version($on_get_perl_versions, 'perl');
+    } ;
+    
+    $on_get_perl_versions = sub {
+        my %perl_version = @_ ;
+        $async_log->debug("running on_get_perl_versions for $actual_dep") ;
+        my $has_older_perl_in_sid = ( $vs->compare( $v_normal, $perl_version{sid} ) < 0 ) ? 1 : 0;
+        $logger->debug(
+            "perl $v_normal is",
+            $has_older_perl_in_sid ? ' ' : ' not ',
+            "older than perl in sid ($perl_version{sid})"
+        );
+
+        my @ordered_ideal_dep = $has_older_perl_in_sid ? 
+            ( \@ideal_perl_dep, \@ideal_lib_dep ) :
+            ( \@ideal_lib_dep, \@ideal_perl_dep ) ;
+        my $ideal_dep = $self->struct_to_dep( @ordered_ideal_dep );
+
+        if ( $actual_dep ne $ideal_dep ) {
+            if ($apply_fix) {
+                @$input = @ordered_ideal_dep ; # notify_change called in check_value
+                $logger->info("fixed dependency with: $ideal_dep, was @$depend");
+            }
+            else {
+                $self->{nb_of_fixes}++;
+                my $msg = "Dependency of dual life package should be '$ideal_dep' not '$actual_dep'";
+                $self->add_warning ($msg);
+                $logger->info("will warn: $msg (fix++)");
+            }
+            $ret = 0;
+        }
+        $perl_dep_cv->send ;
+    } ;
+    
+    $self->check_versioned_dep( $on_perl_check_done , ['perl', '>=', $v_normal] );
+
+    $async_log->debug("waiting for $actual_dep") ;
+    $perl_dep_cv->recv ;
+    $async_log->debug("waiting done for $actual_dep") ;
+    return $ret ;
 }
 
 sub check_versioned_dep {
-    my ($self, $dep_info) = @_ ;
+    my ($self, $callback ,$dep_info) = @_ ;
     my ( $pkg,  $oper,      $vers )    = @$dep_info;
-    $logger->debug("check_versioned_dep: called with @$dep_info");
+    $async_log->debug("called with @$dep_info");
 
     # special case to keep lintian happy
-    return 1 if $pkg eq 'debhelper' ;
+    $callback->(1) if $pkg eq 'debhelper' ;
+
+    my $cb = sub {
+        my @dist_version = @_ ;
+        $async_log->debug("in check_versioned_dep callback with @$dep_info -> @dist_version");
+
+        if ( @dist_version  # no older for unknow packages
+             and defined $oper 
+             and $oper =~ />/ 
+             and $vers !~ /^\$/  # a dpkg variable
+        ) {
+            my $src_pkg_name = $self->grab_value("!Dpkg::Control source Source") ;
+        
+            my $filter = $test_filter || $self->grab_value(
+                step => qq{!Dpkg my_config package-dependency-filter:"$src_pkg_name"},
+                mode => 'loose',
+            ) || '';
+            $callback->($self->has_older_version_than ($pkg, $vers,  $filter, \@dist_version ));
+        }
+        else {
+            $callback->(1) ;
+        }
+    };
 
     # check if Debian has version older than required version
-    my @dist_version = $self->get_pkg_versions($pkg) ;
+    $self->get_available_version($cb, $pkg) ;
 
-    return 1 unless @dist_version ; # no older for unknow packages
-
-    return 1 unless defined $oper and $oper =~ />/ ;
-
-    return 1 if $vers =~ /^\$/ ; # a dpkg variable
-    
-    my $src_pkg_name = $self->grab_value("!Dpkg::Control source Source") ;
-        
-    my $filter = $test_filter || $self->grab_value(
-        step => qq{!Dpkg my_config package-dependency-filter:"$src_pkg_name"},
-        mode => 'loose',
-    ) || '';
-    return $self->has_older_version_than ($pkg, $vers,  $filter, \@dist_version );
 }
 
 sub has_older_version_than {
     my ($self, $pkg, $vers, $filter, $dist_version ) = @_;
 
-    $logger->debug("has_older_version_than: using filter $filter") if $filter;
+    $logger->debug("using filter $filter") if $filter;
     my $regexp = $deb_release_h{$filter} ;
 
-    $logger->debug("has_older_version_than: using regexp $regexp") if defined $regexp;
+    $logger->debug("using regexp $regexp") if defined $regexp;
     
     my @list ;
     my $has_older = 0;
@@ -437,10 +489,10 @@ sub has_older_version_than {
         }
     }
 
-    $logger->debug("has_older_version_than on $pkg $vers has_older is $has_older (@list)");
+    $logger->debug("$pkg $vers has_older is $has_older (@list)");
 
     return 1 if $has_older ;
-    return (0,@list);
+    return wantarray ? (0,@list) : 0 ;
 }
 
 #
@@ -462,13 +514,13 @@ sub check_or_fix_essential_package {
         $logger->debug( "found unversioned dependency on essential package: $pkg");
         if ($apply_fix) {
             @$dep_info = ();
-            $logger->info("removed unversioned essential dependency on $pkg");
+            $logger->info("fix: removed unversioned essential dependency on $pkg");
         }
         else {
             my $msg = "unnecessary unversioned dependency on essential package: $pkg";
-            push @{ $self->{warning_list} }, $msg;
+            $self->add_warning($msg);
             $self->{nb_of_fixes}++;
-            $logger->info("will warn: $msg");
+            $logger->info("will warn: $msg (fix++)");
         }
     }
 }
@@ -486,51 +538,61 @@ sub check_or_fix_pkg_name {
     my $new = $pkg_replace{$pkg} ;
     if ( $new ) {
         if ($apply_fix) {
-            $logger->info("changed package name from $pkg to $new");
+            $logger->info("fix: changed package name from $pkg to $new");
             $dep_info->[0] = $pkg = $new;
         }
         else {
             my $msg = "dubious package name: $pkg. Preferred package is $new";
-            push @{ $self->{warning_list} }, $msg;
+            $self-> add_warning ($msg);
             $self->{nb_of_fixes}++;
-            $logger->info("will warn: $msg");
+            $logger->info("will warn: $msg (fix++)");
         }
     }
     
     # check if this package is defined in current control file
     if ($self->grab(step => "- - binary:$pkg", qw/mode loose autoadd 0/)) {
         $logger->debug("dependency $pkg provided in control file") ;
-        return 1 ;
+        return;
     }
 
-    my @dist_version = $self->get_pkg_versions($pkg) ;
+    my $cb  = sub {
+        if (@_ == 0) { # no version found for $pkg
+            # don't know how to distinguish virtual package from source package
+            $logger->debug("unknown package $pkg") ;
+            $self->add_warning("package $pkg is unknown. Check for typos if not a virtual package.") ;
+        }
+    } ;
+   
+    $self->get_available_version($cb,$pkg ) ;
     # if no pkg was found
-    if (@dist_version == 0) {
-        # don't know how to distinguish virtual package from source package
-        $logger->debug("unknown package $pkg") ;
-        push @{$self->{warning_list}} , "package $pkg is unknown. Check for typos if not a virtual package." ;
-    }
-    
-    return 1;
 }
 
+# all subs but one there are synchronous
 sub check_or_fix_dep {
-    my ( $self, $apply_fix, $dep_info ) = @_;
+    my ( $self, $pending_check_cv, $apply_fix, $dep_info ) = @_;
     my ( $pkg,  $oper,      $vers )    = @$dep_info;
     $logger->debug("called with @$dep_info");
 
     if ( $pkg eq 'debhelper' ) {
         $self->check_debhelper( $apply_fix, $dep_info );
-        return 1;
+        return;
     }
 
     $self->check_or_fix_pkg_name($apply_fix, $dep_info) ;
 
-    my ( $vers_dep_ok, @list ) = $self->check_versioned_dep( $dep_info );
+    my $cb = sub {
+        my ( $vers_dep_ok, @list ) = @_ ;
+        $async_log->debug("callback for check_or_fix_dep with @_") ;
+        $self->warn_or_remove_vers_dep ($apply_fix, $dep_info, \@list) unless $vers_dep_ok ;
 
-    $self->warn_or_remove_vers_dep ($apply_fix, $dep_info, \@list) unless $vers_dep_ok ;
+        $self->check_or_fix_essential_package ($apply_fix, $dep_info);
+        $async_log->debug("callback for check_or_fix_dep -> end") ;
+        $pending_check_cv->end ;
+    } ;
+    $async_log->debug("begin") ;
+    $pending_check_cv->begin ;
+    $self->check_versioned_dep($cb,  $dep_info );
 
-    $self->check_or_fix_essential_package ($apply_fix, $dep_info);
 
     return 1;
 }
@@ -541,42 +603,76 @@ sub warn_or_remove_vers_dep {
 
     if ($apply_fix) {
         splice @$dep_info, 1, 2;    # remove versioned dep, notify_change called in check_value
-        $logger->info("removed versioned dependency from @$dep_info -> $pkg");
+        $logger->info("fix: removed versioned dependency from @$dep_info -> $pkg");
     }
     else {
         $self->{nb_of_fixes}++;
         my $msg = "unnecessary versioned dependency: @$dep_info. Debian has @$list";
-        push @{ $self->{warning_list} }, $msg;
-        $logger->info("will warn: $msg");
+        $self->add_warning( $msg);
+        $logger->info("will warn: $msg (fix++)");
     }
 }
 
-sub get_available_version {
-    my ($self,$pkg_name) = @_ ;
-    state %requested ;
+__PACKAGE__->meta->make_immutable;
 
-    $logger->debug("get_available_version called on $pkg_name");
+
+use vars qw/%cache/ ;
+
+# Set up persistence
+my $cache_file_name = $ENV{HOME}.'/.config_model_depend_cache' ;
+
+# this condition is used during tests
+if (not %cache) {
+    tie %cache => 'DB_File', $cache_file_name, 
+} 
+
+# required to write data back to DB_File
+END { 
+    untie %cache ;
+}
+
+my %requested ;
+
+sub push_cb {
+    my $pkg = shift;
+    my $ref = $requested{$pkg} ||= [] ;
+    push @$ref, @_ ;
+}
+
+sub call_cbs {
+    my $pkg = shift;
+    return unless $requested{$pkg} ;
+    my $ref = delete $requested{$pkg} ;
+    map { $_->(@_) } @$ref ;
+}
+
+
+# asynchronous method
+sub get_available_version {
+    my ($self, $callback,$pkg_name) = @_ ;
+
+    $async_log->debug("called on $pkg_name");
 
     my ($time,@res) = split / /, ($cache{$pkg_name} || '');
     if (defined $time and $time =~ /^\d+$/ and $time + 24 * 60 * 60 * 7 > time) {
-        return (1, @res) ;
+        $async_log->debug("using cached info for $pkg_name");
+        $callback->(@res) ;
+        return;
     }
 
     # package info was requested but info is still not there
     # this may be called twice for the same package: one for source, one
     # for binary package
-    return (0) if $requested{$pkg_name} ;
+    if ($requested{$pkg_name}){
+        push_cb($pkg_name,$callback) ;
+        return ;
+    } ;
 
     my $url = "http://qa.debian.org/cgi-bin/madison.cgi?package=$pkg_name&text=on" ;
-    $requested{$pkg_name} = 1 ;
 
-    # async fetch
-    my $cv= $self->grab("!Dpkg::Control")->backend_mgr
-        ->get_backend("Dpkg::Control")->condvar;
-    $cv->begin;
+    push_cb($pkg_name,$callback);
 
     say "Connecting to qa.debian.org to check $pkg_name versions. Please wait..." ;
-
 
     my $request;
     $request = http_request(
@@ -584,6 +680,7 @@ sub get_available_version {
         timeout => 20, # seconds
         sub {
             my ($body, $hdr) = @_;
+            $async_log->debug("callback of get_available_version called on $pkg_name");
             if ($hdr->{Status} =~ /^2/) {
                 my @res ;
                 foreach my $line (split /\n/, $body) {
@@ -593,16 +690,15 @@ sub get_available_version {
                 }
                 say "got info for $pkg_name" ;
                 $cache{$pkg_name} = time ." @res" ;
+                call_cbs($pkg_name,@res) ;
             }
             else {
                 say "Error for $url: ($hdr->{Status}) $hdr->{Reason}";
+                delete $requested{$pkg_name} ; # trash the callbacks
             }
             undef $request;
-            $cv->end;
         }
     );
-    
-    return (0) ; # will re-check dep once the info is retrieved
 }
 
 __PACKAGE__->meta->make_immutable;

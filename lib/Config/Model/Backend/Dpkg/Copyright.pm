@@ -74,7 +74,7 @@ sub read {
             ) {
             # Some legacy files can have a header and one paragraph with License tag
             # more often than not, this is an implied "File: *"  section
-            my $str = "Missing 'Files:' specification in section starting $section_line.";
+            my $str = "Missing 'Files:' specification in section starting line $section_line.";
             Config::Model::Exception::Syntax 
                 -> throw ( object => $self, error => $str, parsed_line => $section_line ) 
                     if $check eq 'yes' ;

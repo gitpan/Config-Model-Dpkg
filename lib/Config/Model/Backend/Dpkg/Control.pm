@@ -15,8 +15,6 @@ use AnyEvent ;
 
 my $logger = get_logger("Backend::Dpkg::Control") ;
 
-has condvar => (is => 'ro', isa => 'Ref', writer => '_cv') ;
-
 sub suffix { return '' ; }
 
 sub read {
@@ -43,9 +41,6 @@ sub read {
     my $file;
     
     $logger->debug("Reading control source info");
-
-    $self->_cv( AnyEvent->condvar );
-    $self->condvar->begin( sub { shift->send }) ; # make sure begin is called at least once
 
     # first section is source package, following sections are binary package
     my $node = $root->fetch_element(name => 'source', check => $check) ;
@@ -75,10 +70,6 @@ sub read {
         $self->read_sections ($node, $section_line, $section, $args{check});
     }
 
-    $self->condvar->end ; # matches the begin above
-
-    $self->condvar->recv ;
-    my $dump_to_check = $root->dump_tree(mode => 'full') ;
     
     return 1 ;
 }

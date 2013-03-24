@@ -82,28 +82,28 @@ providing the following file:
 
         # t4
         check => { 'source X-Python-Version' => ">= 2.3, << 2.5" },
-        load_warnings => [ (qr/deprecated/) x 2, qr/empty/ ],
-        # dump_warnings => [ qr/empty/ ],
+        load_warnings => [ (qr/deprecated/) x 2 ],
+        dump_warnings => [ qr/empty/ ],
     },
     {
 
         # t5
         check => { 'source X-Python-Version' => ">= 2.3, << 2.6" },
-        load_warnings => [ (qr/deprecated/) x 2, qr/empty/ ],
-        # dump_warnings => [ qr/empty/ ],
+        load_warnings => [ (qr/deprecated/) x 2],
+        dump_warnings => [ qr/empty/ ],
     },
     {
 
         # t6
         check => { 'source X-Python-Version' => ">= 2.3" },
-        load_warnings => [ (qr/deprecated/) x 2, qr/empty/ ],
-        # dump_warnings => [ qr/empty/ ],
+        load_warnings => [ (qr/deprecated/) x 2 ],
+        dump_warnings => [ qr/empty/ ],
     },
     {
         name => 'sdlperl',
         load => 'source Uploaders:2="Sam Hocevar (Debian packages) <sam@zoy.org>"',
         load_warnings => [ ( qr/Warning/) x 9 ],
-        load_check => 'no',
+        load_check => 'skip',
         check => { 'binary:libsdl-perl Depends:2' => '${misc:Depends}' },
         apply_fix => 1,
     },
@@ -114,7 +114,7 @@ providing the following file:
             'source Build-Depends' => "do NOT add libgtk2-perl to build-deps (see bug #554704)",
             'source Maintainer'    => "what a fine\nteam this one is",
         },
-        load_check => 'no',
+        load_check => 'skip',
         apply_fix => 1,
     },
     {

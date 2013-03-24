@@ -12,7 +12,7 @@ $skip = ( $@ or not -r '/etc/debian_version') ? 1 : 0 ;
 @tests = (
     { # t0
         load_warnings => [ qr/Missing/, (qr/deprecated/) x 3 , ],
-        load_check => 'no',
+        load_check => 'skip',
         check => {
             'Files:"*" License full_license' => "[PSF LICENSE TEXT]",
             'Files:"*" Copyright' => "2008, John Doe <john.doe\@example.com>\n2007, Jane Smith <jane.smith\@example.com>",
@@ -96,7 +96,7 @@ $skip = ( $@ or not -r '/etc/debian_version') ? 1 : 0 ;
     { # t7
         # example from CANDIDATE DEP-5 spec (nb 7)
         load_warnings => [ (qr/Adding/) x 1 , qr/Format does not match/ ],
-        load_check => 'no',
+        load_check => 'skip',
         apply_fix => 1,
         check => { 
             Format => "http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/", 
@@ -185,7 +185,7 @@ in ‘/usr/share/common-licenses/GPL-1’." } ,
     },
     {
         name => 'migrate-license-alias',
-        load_check => 'no', # missing Files: * in 2nd section
+        load_check => 'skip', # missing Files: * in 2nd section
         load_warnings => [ qr/Missing/, (qr/deprecated/) x 4  ],
         check => { 
             'Files:"*" License short_name' => "Artistic or GPL-1+" ,

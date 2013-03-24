@@ -1,3 +1,13 @@
+libconfig-model-dpkg-perl (2.034) unstable; urgency=low
+
+  * Dpkg Backend: removed AnyEvent code that blocked until
+    http request were done. This is now handled by Config::Model
+  * Dependency: use asynchronous store
+  * control: depends on libconfig-model-perl >= 2.030
+  * copyright: updated years
+
+ -- Dominique Dumont <dod@debian.org>  Sun, 24 Mar 2013 19:28:16 +0100
+
 libconfig-model-dpkg-perl (2.033) unstable; urgency=low
 
   * bail out of of check_perl_lib_dep if the version contains a
