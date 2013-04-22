@@ -1,6 +1,6 @@
 package Config::Model::Backend::DpkgSyntax ;
 
-use Any::Moose '::Role' ;
+use Mouse::Role;
 
 use Carp;
 use Config::Model::Exception ;
@@ -198,7 +198,7 @@ Config::Model::Backend::DpkgSyntax - Role to read and write files with Dpkg synt
  use Log::Log4perl qw(:easy);
  Log::Log4perl->easy_init($WARN);
  
- use Any::Moose ;
+ use Mouse ;
  with 'Config::Model::Backend::DpkgSyntax';
  
  package main ;

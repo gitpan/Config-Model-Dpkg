@@ -1,7 +1,7 @@
 
 package Config::Model::Backend::Dpkg::Control ;
 
-use Any::Moose ;
+use Mouse ;
 
 extends 'Config::Model::Backend::Any';
 

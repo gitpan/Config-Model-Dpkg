@@ -1,3 +1,14 @@
+libconfig-model-dpkg-perl (2.035) unstable; urgency=low
+
+  * Removed deps on Any::Moose. Use Mouse now
+  * control:
+    - removed deps on libany-moose-perl
+    + added deps on libnamespace-autoclean-perl
+  * Copyright model: parse correctly license short
+    name when a comma is appended to name (Closes: #692131)
+
+ -- Dominique Dumont <dod@debian.org>  Mon, 22 Apr 2013 13:48:56 +0200
+
 libconfig-model-dpkg-perl (2.034) unstable; urgency=low
 
   * Dpkg Backend: removed AnyEvent code that blocked until

@@ -1,4 +1,4 @@
-#    Copyright (c) 2005-2012 Dominique Dumont.
+#    Copyright (c) 2005-2013 Dominique Dumont.
 #
 #    This file is part of Config-Model-Dpkg.
 #
@@ -60,12 +60,9 @@ my $build = $class->new(
   },
   'requires' => {
     'Config::Model' => '2.026',
-    'Any::Moose' => '0',
     'AnyEvent' => '0',
     'AnyEvent::HTTP' => '0',
-    'Carp::Assert::More' => '0',
     'DB_File' => '0',
-    'Exception::Class' => '0',
     'File::HomeDir' => '0',
     'File::Path' => '2.07',
     'Hash::Merge' => '0.12',
@@ -73,11 +70,9 @@ my $build = $class->new(
     'List::MoreUtils' => '0',
     'Log::Log4perl' => '1.11',
     'Mouse' => '0',
-    'MouseX::NativeTraits' => '0',
-    'MouseX::StrictConstructor' => '0',
     'Parse::RecDescent' => 'v1.90.0',
-    'Pod::POM' => '0',
     'Scalar::Util' => '0',
+    'Software::License' => 0,
     'Term::ReadLine' => '0',
     'Text::Autoformat' => '0',
     'Text::Diff' => '0',

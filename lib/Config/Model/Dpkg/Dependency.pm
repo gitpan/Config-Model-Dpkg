@@ -2,7 +2,7 @@ package Config::Model::Dpkg::Dependency ;
 
 use 5.10.1;
 
-use Any::Moose;
+use Mouse;
 use namespace::autoclean;
 
 # Debian only module

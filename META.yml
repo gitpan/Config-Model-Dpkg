@@ -41,18 +41,15 @@ provides:
     version: 0
   Config::Model::Dpkg:
     file: lib/Config/Model/Dpkg.pm
-    version: 2.034
+    version: 2.035
   Config::Model::Dpkg::Dependency:
     file: lib/Config/Model/Dpkg/Dependency.pm
     version: 0
 requires:
-  Any::Moose: 0
   AnyEvent: 0
   AnyEvent::HTTP: 0
-  Carp::Assert::More: 0
   Config::Model: 2.026
   DB_File: 0
-  Exception::Class: 0
   File::HomeDir: 0
   File::Path: 2.07
   Hash::Merge: 0.12
@@ -60,11 +57,9 @@ requires:
   List::MoreUtils: 0
   Log::Log4perl: 1.11
   Mouse: 0
-  MouseX::NativeTraits: 0
-  MouseX::StrictConstructor: 0
   Parse::RecDescent: v1.90.0
-  Pod::POM: 0
   Scalar::Util: 0
+  Software::License: 0
   Term::ReadLine: 0
   Text::Autoformat: 0
   Text::Diff: 0
@@ -74,4 +69,4 @@ resources:
   license: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
   repository: git://anonscm.debian.org/pkg-perl/packages/libconfig-model-dpkg-perl.git
   x_MailingList: https://lists.sourceforge.net/lists/listinfo/config-model-users
-version: 2.034
+version: 2.035

@@ -2,7 +2,7 @@
 package Config::Model::Backend::Dpkg::Patch;
 
 use 5.10.1 ;
-use Any::Moose;
+use Mouse;
 
 extends 'Config::Model::Backend::Any';
 

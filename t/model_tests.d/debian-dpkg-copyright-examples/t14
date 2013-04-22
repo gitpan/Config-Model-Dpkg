@@ -90,6 +90,20 @@ License: Poetic
 Comment: The text of this license is © 2005 Alexander E Genaud,
  see `http://genaud.net/2005/10/poetic-license/'.
 
+Files: lib/test/unit/diff.rb
+Copyright: Copyright 2001-2008 Python Software Foundation
+           Copyright 2008-2012 Kouhei Sutou <kou@clear-code.com>
+License: BSD-2-clause or Ruby, and PSF
+Comment: test for debian #705596
+
+License: BSD-2-clause
+ yada
+
+License: Ruby
+ yada
+
+License: PSF
+ yada
 
 License: Artistic-2.0
  Copyright (c) 2000-2006, The Perl Foundation.

@@ -1,7 +1,7 @@
 package Config::Model::Backend::Dpkg;
 
 use Carp;
-use Any::Moose;
+use Mouse;
 use Config::Model::Exception;
 use UNIVERSAL;
 use File::Path;
@@ -110,7 +110,7 @@ sub write {
     return 1;
 }
 
-no Any::Moose;
+no Mouse;
 __PACKAGE__->meta->make_immutable;
 
 1;
