@@ -1,3 +1,15 @@
+libconfig-model-dpkg-perl (2.036) unstable; urgency=low
+
+  * Dependency:
+    * fix bug to save all info from rmasdison in cache
+    * fix bug that blocked cme during request to rmadison, now
+      rmadison requests are done again in parrallel
+  * Dpkg::Source: DM-Upload-Allowed is deprecated. This parmeter will
+    be removed when running 'cme migrate dpkg' (or cme edit)
+  * Dpkg Control backend: avoid double deprecation warnings
+
+ -- Dominique Dumont <dod@debian.org>  Sat, 27 Apr 2013 16:51:13 +0200
+
 libconfig-model-dpkg-perl (2.035) unstable; urgency=low
 
   * Removed deps on Any::Moose. Use Mouse now

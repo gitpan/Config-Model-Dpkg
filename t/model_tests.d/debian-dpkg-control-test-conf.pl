@@ -82,21 +82,21 @@ providing the following file:
 
         # t4
         check => { 'source X-Python-Version' => ">= 2.3, << 2.5" },
-        load_warnings => [ (qr/deprecated/) x 2 ],
+        load_warnings => [ (qr/deprecated/) x 1 ],
         dump_warnings => [ qr/empty/ ],
     },
     {
 
         # t5
         check => { 'source X-Python-Version' => ">= 2.3, << 2.6" },
-        load_warnings => [ (qr/deprecated/) x 2],
+        load_warnings => [ (qr/deprecated/) x 1],
         dump_warnings => [ qr/empty/ ],
     },
     {
 
         # t6
         check => { 'source X-Python-Version' => ">= 2.3" },
-        load_warnings => [ (qr/deprecated/) x 2 ],
+        load_warnings => [ (qr/deprecated/) x 1 ],
         dump_warnings => [ qr/empty/ ],
     },
     {
@@ -137,10 +137,12 @@ providing the following file:
     {
         # test for #692849, must not warn about missing libfoo dependency
         name => 'dbg-dep',
+        load_warnings => [ qr/DM-Upload/ ],
     },
     {
         # test for #696768, Built-Using field
         name => 'built-using',
+        load_warnings => [ qr/DM-Upload/ ],
     },
 );
 

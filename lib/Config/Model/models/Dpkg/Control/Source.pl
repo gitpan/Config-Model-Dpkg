@@ -250,6 +250,7 @@ The information is meant to be useful for a user knowledgeable in the given Vers
       {
         'value_type' => 'uniline',
         'summary' => 'The package may be uploaded by a Debian Maintainer',
+        'status' => 'deprecated',
         'match' => 'yes',
         'type' => 'leaf',
         'description' => 'If this field is present, then any Debian Maintainers listed in the Maintainer or Uploaders fields may upload the package directly to the Debian archive.  For more information see the "Debian Maintainer" page at the Debian Wiki - http://wiki.debian.org/DebianMaintainer'

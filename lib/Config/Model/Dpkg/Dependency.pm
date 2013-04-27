@@ -70,7 +70,7 @@ pkg_dep: pkg_name dep_version arch_restriction(?) {
    } 
  | pkg_name arch_restriction(?) {
     my @dep_info = ( $item{pkg_name} ) ;
-    $arg[0]->check_or_fix_pkg_name($arg[2], \@dep_info) ;
+    $arg[0]->check_or_fix_pkg_name(@arg[1..2], \@dep_info) ; # async
     $arg[0]->check_or_fix_essential_package($arg[2], \@dep_info) ;
     $return = \@dep_info ;
    }
@@ -118,8 +118,9 @@ sub check_dependency {
         = @args{qw/value check silent notify_change ok callback fix/} ;
 
     # check_value is always called with a callback. This callback must
-    # must called *after* all aysnchronous calls are done (which depends on the
-    # packages listed in the dependency)
+    # must called *after* all asynchronous calls are done (which depends on the
+    # packages listed in the dependency). So use begin and end on this condvar and
+    # nothing else, not send/recv
     my $pending_check = AnyEvent->condvar ;
 
     # value is one dependency, something like "perl ( >= 1.508 )"
@@ -135,9 +136,14 @@ sub check_dependency {
     my $old = $value ;
     my @fixed_dep ; # filled by callback and used when applying fixes
     
+    # this callback will be launched when all checks are done. this can be at
+    # the 'end' call at this end of this sub if all calls of check_depend are
+    # synchronous (which may be the case if all dependency informations are in cache)
+    # or it can be in one of the call backs
     my $on_check_all_done = sub {
         if ($logger->is_debug) {
-            $async_log->debug("in check_dependency callback for ",$self->element_name);
+            $async_log->debug("in check_dependency callback for ",$self->composite_name)
+                if $async_log->is_debug;
             my $new = $value // '<undef>' ;
             $logger->debug("'$old' done".($apply_fix ? " changed to '$new'" : ''));
         }
@@ -150,10 +156,9 @@ sub check_dependency {
             $self->_store_fix($old, $new) if $apply_fix and $new ne $old;
         }
         $callback->(%args) if $callback ;
-        $pending_check->send ;
     } ;
     
-    $async_log->debug("begin for ",$self->element_name) if $async_log->debug;
+    $async_log->debug("begin for ",$self->composite_name) if $async_log->is_debug;
     $pending_check->begin($on_check_all_done) ;
     
     if (defined $value) {
@@ -163,15 +168,8 @@ sub check_dependency {
 
     }
     
-    $async_log->debug("waiting end for ",$self->element_name) if $async_log->debug;
-    $pending_check->end; 
-    $async_log->debug("end for ",$self->element_name) if $async_log->debug;
-    
-    $async_log->debug("waiting until all results for ",$self->element_name," are back")
-        if $async_log->debug;
-    $pending_check->recv; # block until all checks are done
-    $async_log->debug("all results for ",$self->element_name, " are back") 
-        if $async_log->debug;
+    $async_log->debug("end for ",$self->composite_name) if $async_log->is_debug;
+    $pending_check->end;
 }
 
 sub check_debhelper {
@@ -531,7 +529,7 @@ my %pkg_replace = (
 ) ;
 
 sub check_or_fix_pkg_name {
-    my ( $self, $apply_fix, $dep_info ) = @_;
+    my ( $self, $pending_check_cv, $apply_fix, $dep_info ) = @_;
     my ( $pkg,  $oper,      $vers )    = @$dep_info;
     $logger->debug("called with @$dep_info");
 
@@ -561,8 +559,13 @@ sub check_or_fix_pkg_name {
             $logger->debug("unknown package $pkg") ;
             $self->add_warning("package $pkg is unknown. Check for typos if not a virtual package.") ;
         }
+        $async_log->debug("callback for check_or_fix_pkg_name -> end") ;
+        $pending_check_cv->end ;
     } ;
    
+    # is asynchronous
+    $async_log->debug("begin") ;
+    $pending_check_cv->begin ;
     $self->get_available_version($cb,$pkg ) ;
     # if no pkg was found
 }
@@ -578,7 +581,7 @@ sub check_or_fix_dep {
         return;
     }
 
-    $self->check_or_fix_pkg_name($apply_fix, $dep_info) ;
+    $self->check_or_fix_pkg_name($pending_check_cv, $apply_fix, $dep_info) ;
 
     my $cb = sub {
         my ( $vers_dep_ok, @list ) = @_ ;
@@ -612,9 +615,6 @@ sub warn_or_remove_vers_dep {
         $logger->info("will warn: $msg (fix++)");
     }
 }
-
-__PACKAGE__->meta->make_immutable;
-
 
 use vars qw/%cache/ ;
 

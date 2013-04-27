@@ -118,11 +118,14 @@ sub store_section_in_tree {
           . $node->location
           . ")" );
 
+    # control parameters are case insensitive
+    my $found = $node->find_element( $key, case => 'any' ) ;
+
     my ($v,$l,$a,@c) = @$v_ref;
 
     $logger->debug("$key value: $v");
-    my $type = $node->element_type($key);
-    my $elt_obj = $node->fetch_element( name => $key, check => $check );
+    my $type = $node->element_type($found);
+    my $elt_obj = $node->fetch_element( name => $found, check => $check );
 
     $elt_obj->annotation(join("\n",@c)) if @c ;
     $elt_obj->notify_change(note => $a, really => 1) if $a ;
@@ -136,14 +139,21 @@ sub store_section_in_tree {
         $logger->debug( "list $key store set '" . join( "','", @v ) . "'" );
         $elt_obj->store_set( \@v, check => $check );
     }
-    elsif ( my $found = $node->find_element( $key, case => 'any' ) ) {
+    elsif ($found eq 'Description' and $elt_obj) {
+        my ($synopsis,$desc) = split /\n/, $v, 2 ;
+        $logger->debug("storing Synopsis  value: $synopsis");
+        $node->fetch_element('Synopsis')->store( value => $synopsis, check => $check );
+        $logger->debug("storing Description  value: $desc");
+        $elt_obj->store( value => $desc, check => $check );
+    }
+    elsif ($elt_obj ) {
         my @elt = ($found);
         my @v = ( $found eq 'Description' ) ? ( split /\n/, $v, 2 ) : ($v);
         unshift @elt, 'Synopsis' if $found eq 'Description';
         foreach (@elt) {
             my $sub_v = shift @v;
             $logger->debug("storing $_  value: $sub_v");
-            $node->fetch_element($_)->store( value => $sub_v, check => $check );
+            $elt_obj->store( value => $sub_v, check => $check );
         }
     }
     else {
