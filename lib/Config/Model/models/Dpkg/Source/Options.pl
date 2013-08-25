@@ -5,7 +5,7 @@
       '.*',
       {
         'value_type' => 'uniline',
-        'warn' => 'There\'s a missing element in Dpkg::Source::Opion. Please send a mail to config-model-users at lists.sourceforge.com mentioning the missing element and its relevant documentation.',
+        'warn' => 'There\'s a missing element in Dpkg::Source::Option. Please send a mail to config-model-users at lists.sourceforge.net mentioning the missing element and its relevant documentation.',
         'type' => 'leaf',
         'description' => 'Unexpected but possibly right debian source option.'
       }
@@ -37,6 +37,40 @@
         'summary' => 'Perl regexp to extend the diff-ignore setup',
         'type' => 'leaf',
         'description' => 'The perl regular expression specified will extend the default regular expression associated to diff-ignore by concatenating "|regexp" to the default regexp. This option is convenient to exclude some auto-generated files from the automatic patch generation.'
+      },
+      'compression',
+      {
+        'value_type' => 'enum',
+        'summary' => 'Specify  the compression to use for created files (tarballs and diffs).',
+        'upstream_default' => 'gzip',
+        'type' => 'leaf',
+        'description' => 'gzip is the default compression. xz is only supported since dpkg-dev 1.15.5.',
+        'choice' => [
+          'gzip',
+          'gzip2',
+          'lzma',
+          'xz'
+        ]
+      },
+      'compression-level',
+      {
+        'value_type' => 'enum',
+        'summary' => 'Compression level to use.',
+        'type' => 'leaf',
+        'description' => 'Default compression level is 9 for gzip and bzip2, 6 for xz and lzma.',
+        'choice' => [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          'best',
+          'fast'
+        ]
       }
     ]
   }

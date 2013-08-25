@@ -11,7 +11,7 @@ $skip = ( $@ or not -r '/etc/debian_version' ) ? 1 : 0;
 
 my $del_home = sub { 
     my $r = shift ;
-    my $home = File::HomeDir->my_data; # Works also on Windows
+    my $home = File::HomeDir->my_home; # Works also on Windows
     push @$r, "$home/.dpkg-meta.yml" ;
 };
 
@@ -56,7 +56,7 @@ my $del_home = sub {
     }
 );
 
-my $cache_file = 't/model_tests.d/debian-dependency-cache.txt';
+my $cache_file = 't/model_tests.d/dependency-cache.txt';
 
 my $ch = new IO::File "$cache_file";
 foreach ( $ch->getlines ) {

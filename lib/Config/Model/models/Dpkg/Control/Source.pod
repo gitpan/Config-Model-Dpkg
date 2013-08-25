@@ -10,17 +10,17 @@ Configuration classes used by L<Config::Model>
 
 =head2 Source - source package name
 
-I<< Mandatory. Type uniline.  >>
+I<< Mandatory. Type uniline.  >> 
 
 =head2 Maintainer - package maintainer's name and email address
 
 The package maintainer's name and email address. The name must come first, then the email address inside angle brackets <> (in RFC822 format).
 
-If the maintainer's name contains a full stop then the whole field will not work directly as an email address due to a misfeature in the syntax specified in RFC822; a program using this field as an address must check for this and correct the problem if necessary (for example by putting the name in round brackets and moving it to the end, and bringing the email address forward). I<< Mandatory. Type uniline.  >>
+If the maintainer's name contains a full stop then the whole field will not work directly as an email address due to a misfeature in the syntax specified in RFC822; a program using this field as an address must check for this and correct the problem if necessary (for example by putting the name in round brackets and moving it to the end, and bringing the email address forward). I<< Mandatory. Type uniline.  >> 
 
 =head2 Uploaders
 
-I<< Optional. Type list of uniline.  >>
+I<< Optional. Type list of uniline.  >> 
 
 =head2 Section
 
@@ -46,11 +46,17 @@ area/section if the package is in the contrib or non-free archive areas.
 
 =back
 
-I<< Optional. Type uniline.  >>
+I<< Optional. Type uniline.  >> 
+
+=head2 XS-Autobuild - Allow automatic build of non-free or contrib package
+
+Read the full description from 
+L<section 5.10.5|http://www.debian.org/doc/manuals/developers-reference/pkgs.html#non-free-buildd> 
+in Debian developer reference.I<< Optional. Type boolean. default: '0'.  >> 
 
 =head2 Priority
 
-I<< Optional. Type enum. choice: 'required', 'important', 'standard', 'optional', 'extra'.  >>
+I<< Optional. Type enum. choice: 'required', 'important', 'standard', 'optional', 'extra'.  >> 
 
 Here are some explanations on the possible values:
 
@@ -82,89 +88,89 @@ These packages provide a reasonably small but not too limited character-mode sys
 
 =head2 Build-Depends
 
-I<< Optional. Type list of uniline.  >>
+I<< Optional. Type list of uniline.  >> 
 
 =head2 Build-Depends-Indep
 
-I<< Optional. Type list of uniline.  >>
+I<< Optional. Type list of uniline.  >> 
 
 =head2 Build-Conflicts
 
-I<< Optional. Type list of uniline.  >>
+I<< Optional. Type list of uniline.  >> 
 
 =head2 Standards-Version - Debian policy version number this package complies to
 
-This field indicates the debian policy version number this package complies to. I<< Optional. Type uniline. default: '3.9.4'.  >>
+This field indicates the debian policy version number this package complies to. I<< Optional. Type uniline. default: '3.9.4'.  >> 
 
 =head2 Vcs-Browser - web-browsable URL of the VCS repository
 
 Value of this field should be a http:// URL pointing to a web-browsable copy of the Version Control System repository used to maintain the given package, if available.
 
-The information is meant to be useful for the final user, willing to browse the latest work done on the package (e.g. when looking for the patch fixing a bug tagged as pending in the bug tracking system). I<< Optional. Type uniline.  >>
+The information is meant to be useful for the final user, willing to browse the latest work done on the package (e.g. when looking for the patch fixing a bug tagged as pending in the bug tracking system). I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Arch - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Bzr - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Cvs - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Darcs - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Git - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Hg - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Mtn - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 Vcs-Svn - URL of the VCS repository
 
 Value of this field should be a string identifying unequivocally the location of the Version Control System repository used to maintain the given package, if available. * identify the Version Control System; currently the following systems are supported by the package tracking system: arch, bzr (Bazaar), cvs, darcs, git, hg (Mercurial), mtn (Monotone), svn (Subversion). It is allowed to specify different VCS fields for the same package: they will all be shown in the PTS web interface.
 
-The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >>
+The information is meant to be useful for a user knowledgeable in the given Version Control System and willing to build the current version of a package from the VCS sources. Other uses of this information might include automatic building of the latest VCS version of the given package. To this end the location pointed to by the field should better be version agnostic and point to the main branch (for VCSs supporting such a concept). Also, the location pointed to should be accessible to the final user; fulfilling this requirement might imply pointing to an anonymous access of the repository instead of pointing to an SSH-accessible version of the same. I<< Optional. Type uniline.  >> 
 
 =head2 DM-Upload-Allowed - The package may be uploaded by a Debian Maintainer
 
-If this field is present, then any Debian Maintainers listed in the Maintainer or Uploaders fields may upload the package directly to the Debian archive.  For more information see the "Debian Maintainer" page at the Debian Wiki - http://wiki.debian.org/DebianMaintainer. B<Deprecated> I<< Optional. Type uniline.  >>
+If this field is present, then any Debian Maintainers listed in the Maintainer or Uploaders fields may upload the package directly to the Debian archive.  For more information see the "Debian Maintainer" page at the Debian Wiki - http://wiki.debian.org/DebianMaintainer. B<Deprecated> I<< Optional. Type uniline.  >> 
 
 =head2 Homepage
 
-I<< Optional. Type uniline.  >>
+I<< Optional. Type uniline.  >> 
 
 =head2 XS-Python-Version
 
-B<Deprecated> I<< Optional. Type uniline.  >>
+B<Deprecated> I<< Optional. Type uniline.  >> 
 
 =head2 X-Python-Version - supported versions of Python 
 
-This field specifies the versions of Python (not versions of Python 3) supported by the source package.  When not specified, they default to all currently supported Python (or Python 3) versions. For more detail, See L<python policy|http://www.debian.org/doc/packaging-manuals/python-policy/ch-module_packages.html#s-specifying_versions>I<< Optional. Type uniline. upstream_default: 'all'.  >>
+This field specifies the versions of Python (not versions of Python 3) supported by the source package.  When not specified, they default to all currently supported Python (or Python 3) versions. For more detail, See L<python policy|http://www.debian.org/doc/packaging-manuals/python-policy/ch-module_packages.html#s-specifying_versions>I<< Optional. Type uniline. upstream_default: 'all'.  >> 
 
 Note: X-Python-Version is migrated with 
 
@@ -189,7 +195,12 @@ and with $xspython => "C<- XS-Python-Version>"
 
 =head2 X-Python3-Version - supported versions of Python3 
 
-This field specifies the versions of Python 3 supported by the package. For more detail, See L<python policy|http://www.debian.org/doc/packaging-manuals/python-policy/ch-module_packages.html#s-specifying_versions>I<< Optional. Type uniline.  >>
+This field specifies the versions of Python 3 supported by the package. For more detail, See L<python policy|http://www.debian.org/doc/packaging-manuals/python-policy/ch-module_packages.html#s-specifying_versions>I<< Optional. Type uniline.  >> 
+
+=head2 XS-Ruby-Versions
+
+indicate the versions of the interpreter
+supported by the library. I<< Optional. Type uniline.  >> 
 
 =head1 SEE ALSO
 

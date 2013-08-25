@@ -4,8 +4,8 @@ BEGIN {
     # dirty trick to create a Memoize cache so that test will use this instead
     # of getting values through the internet
     no warnings 'once';
-    my $sep = chr(28);
     %Config::Model::Dpkg::Dependency::cache = (
+        'libarchive-extract-perl' => 'jessie 0.68-1 sid 0.68-1',
         'perl-modules' => 'lenny 5.10.0-19lenny3 squeeze 5.10.1-17 sid 5.10.1-17 experimental 5.12.0-2 experimental 5.12.2-2',
         'perl' => 'lenny 5.10.0-19lenny3 squeeze 5.10.1-17 sid 5.10.1-17 experimental 5.12.0-2 experimental 5.12.2-2',
         'debhelper' => 'etch 5.0.42 backports/etch 7.0.15~bpo40+2 lenny 7.0.15 backports/lenny 8.0.0~bpo50+2 squeeze 8.0.0 wheezy 8.1.2 sid 8.1.2',
@@ -15,6 +15,8 @@ BEGIN {
         'lcdproc' => 'etch 0.4.5-1.1 lenny 0.4.5-1.1 squeeze 0.5.2-3 wheezy 0.5.2-3.1 sid 0.5.2-3.1',
         'libsdl1.2' => '', # only source
         'dpkg' => 'squeeze 1.15 wheezy 1.16 sid 1.16',
+        makedev => 'squeeze 2.3.1-89 wheezy 2.3.1-92 jessie 2.3.1-92 sid 2.3.1-93',
+        udev => 'squeeze 164-3 wheezy 175-7.2 jessie 175-7.2 sid 175-7.2',
     );
     my $t = time ;
     map { $_ = "$t $_"} values %Config::Model::Dpkg::Dependency::cache ;
@@ -23,9 +25,9 @@ BEGIN {
 use ExtUtils::testlib;
 use Test::More ;
 use Test::Memory::Cycle;
+use Test::Differences;
 use Config::Model ;
 use Config::Model::Value ;
-#use Config::Model::Dpkg::Dependency ;
 use Log::Log4perl qw(:easy) ;
 use File::Path ;
 use File::Copy ;
@@ -37,7 +39,7 @@ if ( $@ ) {
     plan skip_all => "AptPkg::Config is not installed";
 }
 elsif ( -r '/etc/debian_version' ) {
-    plan tests => 47;
+    plan tests => 58;
 }
 else {
     plan skip_all => "Not a Debian system";
@@ -136,6 +138,27 @@ warning_like {
 
 my $c_unit = $unit->config_root ;
 my $dep_value = $c_unit->grab("binary:dummy Depends:0");
+
+my @struct_2_dep = (
+    [['foo']] => 'foo',
+    [['foo'],['bar']] => 'foo | bar',
+    [[ 'foo', '>=' , '2.15']] => 'foo (>= 2.15)',
+    [[ 'foo', '>=' , '2.15', 'linux-i386', 'hurd']] => 'foo (>= 2.15) [linux-i386 hurd]',
+    [[ 'foo', undef , undef, 'linux-i386', 'hurd']] => 'foo [linux-i386 hurd]',
+    [[ 'udev', undef , undef, 'linux-any'],[ 'makedev', undef , undef, 'linux-any']] => 'udev [linux-any] | makedev [linux-any]',
+);
+
+while (@struct_2_dep) {
+    my $data = shift @struct_2_dep ;
+    my $str = shift @struct_2_dep ;
+    is(
+        $dep_value->struct_to_dep(@$data),
+        $str,
+        "test struct_to_dep -> $str"
+    ) ;
+}
+
+
 warning_like {
     $dep_value->store('perl') ;
 }
@@ -159,15 +182,27 @@ $dep_value->check_versioned_dep( $ok_cb, ['perl','>=','5.6.0'] ) ;
 
 # $dep_value->store('libcpan-meta-perl') ;
 # exit ;
-my $dep = [ ['libcpan-meta-perl']] ; 
-my $ret = $dep_value->check_depend_chain (AnyEvent->condvar,0, $dep);
-is($ret, 0, "check dual life of libcpan-meta-perl") ;
+my @chain_tests = (
+    # tag name for display, test data, expected result: 1 (good dep) or expected fixed structure
+    'libcpan-meta-perl' => [ ['libcpan-meta-perl']]  => [['libcpan-meta-perl'],[qw/perl >= 5.13.10/]],
+    'libmodule-build-perl' => [ [qw/perl >= 5.10/], ['libmodule-build-perl']]  => [['perl'],[]],
+    # test Debian #719225
+    'libarchive-extract-perl' => [ [qw/libarchive-extract-perl >= 0.68/] , [qw/perl >= 5.17.9/]]  =>  [ ['libarchive-extract-perl'] , [qw/perl >= 5.17.9/]],
+    'libarchive-extract-perl' => [ ['libarchive-extract-perl'] , [qw/perl >= 5.17.9/]]  => 1,
+);
 
-# exit ;
-
-my $dep2 = [ [qw/perl >= 5.10/], 'libmodule-build-perl'] ; 
-my $ret2 = $dep_value->check_depend_chain (AnyEvent->condvar,0, $dep);
-is($ret, 0, "check dual life of perl | libmodule-build-perl") ;
+while (@chain_tests) {
+    my ($tag,$dep,$expect) = splice @chain_tests,0,3;
+    my $ret = $dep_value->check_depend_chain (1, $dep);
+    if (ref $expect) {
+        # $dep was not correct
+        is($ret, 0, "check dual life of $tag") ;
+        eq_or_diff ($dep,$expect,"check fixed value of dual life $tag");
+    }
+    else {
+        is($ret, $expect, "check dual life of $tag") ;
+    }
+}
 
 }
 
@@ -212,6 +247,7 @@ is($dpkg_dep->fetch,"dpkg",'check dpkg value') ;
 is($dpkg_dep->has_fixes,1, "test presence of fixes");
 $dpkg_dep->apply_fixes;
 is($dpkg_dep->has_fixes,0, "test that fixes are gone");
+
 is($dpkg_dep->fetch,undef,'check fixed dpkg value') ;
 
 $dpkg_dep = $control->grab("binary:libdist-zilla-plugins-cjm-perl Depends:4");
@@ -221,15 +257,6 @@ is($dpkg_dep->has_fixes,1, "test presence of fixes");
 $dpkg_dep->apply_fixes;
 is($dpkg_dep->has_fixes,0, "test that fixes are gone");
 is($dpkg_dep->fetch,undef,'check fixed dpkg value') ;
-
-
-
-# check parser and grammer
-my $parser = $perl_dep->dep_parser ;
-ok($parser,"parser compiled ok");
-
-my $res = $parser->dep_version("( >= 5.10.0 )") ;
-is_deeply( $res, ['>=','5.10.0'],"check dep_version rule");
 
 warning_like {
     $perl_dep->store("perl ( >= 5.6.0 )") ;
@@ -252,6 +279,9 @@ ok( 1, "check_depend on xorg arch stuff rule");
 $control->load(q{binary:libdist-zilla-plugins-cjm-perl Depends:6="lcdproc (= ${binary:Version})"});
 ok( 1, "check_depend on lcdproc where version is a variable");
 
+$control->load(q{binary:libdist-zilla-plugins-cjm-perl Depends:7="udev [linux-any] | makedev [linux-any]"});
+ok( 1, "check_depend on lcdproc with 2 alternate deps with arch restriction");
+
 # reset change tracker
 $inst-> clear_changes ;
 
@@ -259,12 +289,16 @@ $inst-> clear_changes ;
 is($perl_dep->has_fixes,1, "test presence of fixes");
 $perl_dep->apply_fixes;
 is($perl_dep->fetch,'${perl:Depends}',"check fixed dependency value");
+is(
+    $control->grab_value("binary:libdist-zilla-plugins-cjm-perl Depends:7"),
+    'udev [linux-any] | makedev [linux-any]',
+    "test fixed alternate deps with arch restriction"
+);
 is($perl_dep->has_fixes,0, "test that fixes are gone");
 is($perl_dep->has_warning,0,"check that warnings are gone");
 
 is($inst->c_count, 2,"check that fixes are tracked with notify changes") ;
 print scalar $inst->list_changes,"\n" if $trace ;
- 
 
 my $perl_bdi = $control->grab("source Build-Depends-Indep:1");
 

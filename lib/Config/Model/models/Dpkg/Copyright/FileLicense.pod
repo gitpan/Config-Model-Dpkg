@@ -17,7 +17,7 @@ short name may be assigned for these licenses. These arbitrary names are only gu
 to be unique within a single copyright file.
 
 The name given must match a License described in License element in root node
-. I<< Optional. Type uniline.  >>
+. I<< Optional. Type uniline.  >> 
 
 Here are some explanations on the possible values:
 
@@ -151,7 +151,7 @@ Note: short_name is migrated with 'C<$replace{$alias}>' and with $alias => "C<- 
 
 =head2 exception
 
-License exception. I<< Optional. Type uniline.  >>
+License exception. I<< Optional. Type uniline.  >> 
 
 Here are some explanations on the possible values:
 
@@ -194,7 +194,7 @@ delete it here.
 =head2 full_license
 
 if left blank here, the file must include a stand-alone License section matching each license short name listed on the first line (see the Standalone License Section section). Otherwise, this field should either include the full text of the license(s) or include a pointer to the license file under /usr/share/common-licenses. This field should include all text needed in order to fulfill both Debian Policy requirement for including a copy of the software distribution license, and any license requirements to include warranty disclaimers or other notices with the binary package.
-I<< Optional. Type string.  >>
+I<< Optional. Type string.  >> 
 
 =head1 SEE ALSO
 

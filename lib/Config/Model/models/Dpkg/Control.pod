@@ -10,11 +10,11 @@ Configuration classes used by L<Config::Model>
 
 =head2 source - package source description
 
-I<< Optional. Type node.  >>
+I<< Optional. Type node of class L<Dpkg::Control::Source|Config::Model::models::Dpkg::Control::Source> .  >> 
 
 =head2 binary - package binary description
 
-I<< Optional. Type hash of node.  >>
+I<< Optional. Type hash of node of class L<Dpkg::Control::Binary|Config::Model::models::Dpkg::Control::Binary> .  >> 
 
 =head1 SEE ALSO
 

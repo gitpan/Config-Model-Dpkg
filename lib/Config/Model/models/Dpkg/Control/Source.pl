@@ -78,6 +78,32 @@ area/section if the package is in the contrib or non-free archive areas.
 
 '
       },
+      'XS-Autobuild',
+      {
+        'default' => '0',
+        'description' => 'Read the full description from 
+L<section 5.10.5|http://www.debian.org/doc/manuals/developers-reference/pkgs.html#non-free-buildd> 
+in Debian developer reference.',
+        'value_type' => 'boolean',
+        'level' => 'hidden',
+        'summary' => 'Allow automatic build of non-free or contrib package',
+        'warp' => {
+          'follow' => {
+            'section' => '- Section'
+          },
+          'rules' => [
+            '$section =~ m!^(contrib|non-free)/!',
+            {
+              'level' => 'normal'
+            }
+          ]
+        },
+        'type' => 'leaf',
+        'write_as' => [
+          'no',
+          'yes'
+        ]
+      },
       'Priority',
       {
         'value_type' => 'enum',
@@ -305,6 +331,25 @@ $new ;',
         'experience' => 'advanced',
         'type' => 'leaf',
         'description' => 'This field specifies the versions of Python 3 supported by the package. For more detail, See L<python policy|http://www.debian.org/doc/packaging-manuals/python-policy/ch-module_packages.html#s-specifying_versions>'
+      },
+      'XS-Ruby-Versions',
+      {
+        'value_type' => 'uniline',
+        'level' => 'hidden',
+        'warp' => {
+          'follow' => {
+            'section' => '- Section'
+          },
+          'rules' => [
+            '$section =~ m!ruby$!',
+            {
+              'level' => 'normal'
+            }
+          ]
+        },
+        'type' => 'leaf',
+        'description' => 'indicate the versions of the interpreter
+supported by the library'
       }
     ]
   }

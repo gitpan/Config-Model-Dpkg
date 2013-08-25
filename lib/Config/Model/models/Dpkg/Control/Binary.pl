@@ -15,7 +15,7 @@
         'mandatory' => '1',
         'type' => 'leaf',
         'description' => 'If a program needs to specify an architecture specification string in some place, it should select one of the strings provided by dpkg-architecture -L. The strings are in the format os-arch, though the OS part is sometimes elided, as when the OS is Linux. 
-A package may specify an architecture wildcard. Architecture wildcards are in the format any (which matches every architecture), os-any, or any-cpu. For more details, see L<http://www.debian.org/doc/debian-policy/ch-customized-programs.html#s-arch-spec| Debian policy>'
+A package may specify an architecture wildcard. Architecture wildcards are in the format any (which matches every architecture), os-any, or any-cpu. For more details, see L<Debian policy|http://www.debian.org/doc/debian-policy/ch-customized-programs.html#s-arch-spec>'
       },
       'Multi-Arch',
       {
@@ -275,6 +275,25 @@ else {
         },
         'mandatory' => '1',
         'type' => 'leaf'
+      },
+      'XB-Ruby-Versions',
+      {
+        'value_type' => 'uniline',
+        'level' => 'hidden',
+        'warp' => {
+          'follow' => {
+            'section' => '- - source Section'
+          },
+          'rules' => [
+            '$section =~ m!ruby$!',
+            {
+              'level' => 'normal'
+            }
+          ]
+        },
+        'type' => 'leaf',
+        'description' => 'indicate the versions of the interpreter
+supported by the library'
       }
     ]
   }

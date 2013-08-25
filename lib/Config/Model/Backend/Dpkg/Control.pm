@@ -118,14 +118,16 @@ sub store_section_in_tree {
           . $node->location
           . ")" );
 
-    # control parameters are case insensitive
-    my $found = $node->find_element( $key, case => 'any' ) ;
+    # control parameters are case insensitive. Falling back on $key
+    # means $key is unknown. fetch_element will trigger a meaningful
+    # error message
+    my $found = $node->find_element( $key, case => 'any' ) || $key;
 
     my ($v,$l,$a,@c) = @$v_ref;
 
     $logger->debug("$key value: $v");
-    my $type = $node->element_type($found);
     my $elt_obj = $node->fetch_element( name => $found, check => $check );
+    my $type = $node->element_type($found);
 
     $elt_obj->annotation(join("\n",@c)) if @c ;
     $elt_obj->notify_change(note => $a, really => 1) if $a ;

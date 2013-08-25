@@ -1,3 +1,38 @@
+libconfig-model-dpkg-perl (2.038) unstable; urgency=low
+
+  * Fix alternate dependency corner case (Closes: #719225)
+  * Dpkg Source model: add XS-AutoBuild field (Closes: #719753)
+  * Dpkg Control Binary model: fixed pod error in embedded doc
+  * dpkg control backend: improved error message for unknown flags
+  * Dpkg model: added XS-Ruby-Versions and XB-Ruby-Versions fields
+   (Closes: #713053)
+  * control:
+    + added libconfig-model-tester-perl dependency.
+    * Clean up other dependencies
+    * up-to-date libmodule-corelist-perl is now required instead
+      of recommended to ensure better resulst with Perl dual-life
+      package
+    * updated description
+  - removed obsolete lintian override
+
+ -- Dominique Dumont <dod@debian.org>  Sun, 25 Aug 2013 17:17:05 +0200
+
+libconfig-model-dpkg-perl (2.037) unstable; urgency=low
+
+  * Dpkg Source model: fixed typo (thanks Daniel)
+  * Source Option model: added compression and compression-level
+    parameters (thanks Daniel)
+  * doc: added BUGS section
+  * Dependency parser:
+    * rewrote grammar to give better error message. Extracted
+      complex treament from grammar. Fixed bugs related to arch parsing
+      (Closes: #707565)
+    * trap mismatched '!' in dependency arch declaration
+  * Patch backend: replaced 'given...when' with good old 'if'
+    (Closes: #709783)
+
+ -- Dominique Dumont <dod@debian.org>  Mon, 20 May 2013 18:55:09 +0200
+
 libconfig-model-dpkg-perl (2.036) unstable; urgency=low
 
   * Dependency:

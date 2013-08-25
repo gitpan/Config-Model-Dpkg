@@ -24,6 +24,7 @@ providing the following file:
             'source Build-Depends-Indep:1', "libdist-zilla-perl",    # fixed
             'source Build-Depends-Indep:5', "libpath-class-perl",
             'source Build-Depends-Indep:6', "perl (>= 5.11.3) | libmodule-build-perl (>= 0.36)", # fixed
+            'source Build-Depends-Indep:7', "udev [linux-any] | makedev [linux-any]",
             'binary:libdist-zilla-plugins-cjm-perl Depends:0',
             '${misc:Depends}',
             'source Vcs-Browser' ,'http://anonscm.debian.org/gitweb/?p=pkg-perl/packages/libdist-zilla-plugins-cjm-perl.git',
@@ -144,9 +145,25 @@ providing the following file:
         name => 'built-using',
         load_warnings => [ qr/DM-Upload/ ],
     },
+    {
+        # test for #719753, XS-Autobuild field
+        name => 'non-free',
+        check => {
+            'source Section' => 'non-free/libs',
+            'source XS-Autobuild' => 'yes',
+        },
+    },
+    {
+        # test for #713053,  XS-Ruby-Versions and XB-Ruby-Versions fields
+        name => 'ruby',
+        check => {
+            'source XS-Ruby-Versions' => 'all',
+            'binary:libfast-xs-ruby XB-Ruby-Versions' => '${ruby:Versions}',
+        },
+    },
 );
 
-my $cache_file = 't/model_tests.d/debian-dependency-cache.txt';
+my $cache_file = 't/model_tests.d/dependency-cache.txt';
 
 my $ch = new IO::File "$cache_file";
 foreach ($ch->getlines) {

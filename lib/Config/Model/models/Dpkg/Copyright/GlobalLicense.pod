@@ -10,7 +10,7 @@ Configuration classes used by L<Config::Model>
 
 =head2 short_name
 
-The Copyright and License fields in the header paragraph may complement but do not replace the files paragraphs. They can be used to summarise the contributions and redistribution terms for the whole package, for instance when a work combines a permissive and a copyleft license, or to document a compilation copyright and license. It is possible to use only License in the header paragraph, but Copyright alone makes no sense.I<< Optional. Type uniline.  >>
+The Copyright and License fields in the header paragraph may complement but do not replace the files paragraphs. They can be used to summarise the contributions and redistribution terms for the whole package, for instance when a work combines a permissive and a copyleft license, or to document a compilation copyright and license. It is possible to use only License in the header paragraph, but Copyright alone makes no sense.I<< Optional. Type uniline.  >> 
 
 Here are some explanations on the possible values:
 
@@ -143,7 +143,7 @@ Zope Public License. For versions, consult Zope.org
 =head2 full_license
 
 if left blank here, the file must include a stand-alone License section matching each license short name listed on the first line (see the Standalone License Section section). Otherwise, this field should either include the full text of the license(s) or include a pointer to the license file under /usr/share/common-licenses. This field should include all text needed in order to fulfill both Debian Policy requirement for including a copy of the software distribution license, and any license requirements to include warranty disclaimers or other notices with the binary package.
-I<< Optional. Type string.  >>
+I<< Optional. Type string.  >> 
 
 =head1 SEE ALSO
 

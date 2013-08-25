@@ -24,25 +24,25 @@ the Copyright field for a stanza covering both file A and file B need contain on
 
       Copyright 2008 John Smith Copyright 2009, 2010 Angela Watts
 
-The Copyright field may contain the original copyright statement copied exactly (including the word Copyright), or it can shorten the text, as long as it does not sacrifice information. Examples in this specification use both forms.I<< Mandatory. Type string.  >>
+The Copyright field may contain the original copyright statement copied exactly (including the word Copyright), or it can shorten the text, as long as it does not sacrifice information. Examples in this specification use both forms.I<< Mandatory. Type string.  >> 
 
 =head2 License
 
-I<< Optional. Type node.  >>
+I<< Optional. Type node of class L<Dpkg::Copyright::FileLicense|Config::Model::models::Dpkg::Copyright::FileLicense> .  >> 
 
 =head2 License-Alias
 
-B<Deprecated> I<< Optional. Type uniline.  >>
+B<Deprecated> I<< Optional. Type uniline.  >> 
 
 =head2 Comment
 
-This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.I<< Optional. Type string.  >>
+This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.I<< Optional. Type string.  >> 
 
 Note: Comment is migrated with 'C<$old>' and with $old => "C<- X-Comment>"
 
 =head2 X-Comment
 
-B<Deprecated> I<< Optional. Type string.  >>
+B<Deprecated> I<< Optional. Type string.  >> 
 
 =head1 SEE ALSO
 

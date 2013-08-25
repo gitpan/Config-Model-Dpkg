@@ -46,36 +46,27 @@ my $build = $class->new(
     dist_author   => 'Dominique Dumont (dod at debian dot org)',
 
   'build_requires' => {
-    'File::Copy::Recursive' => '0',
+    'Config::Model::Tester' => '2.043', # need specific bug fix
+    'File::Slurp' => '2.07',
     'Module::Build' => '0.34',
     'Path::Class' => '0',
-    'Probe::Perl' => '0',
-    'Test::Command' => '0.08',
     'Test::Differences' => '0',
     'Test::Exception' => '0',
-    'Test::File::Contents' => '0',
     'Test::Memory::Cycle' => '0',
     'Test::More' => '0',
     'Test::Warn' => '0.11'
   },
   'requires' => {
-    'Config::Model' => '2.026',
+    'Config::Model' => '2.041',
     'AnyEvent' => '0',
     'AnyEvent::HTTP' => '0',
     'DB_File' => '0',
-    'File::HomeDir' => '0',
     'File::Path' => '2.07',
-    'Hash::Merge' => '0.12',
     'IO::File' => '0',
-    'List::MoreUtils' => '0',
     'Log::Log4perl' => '1.11',
     'Mouse' => '0',
     'Parse::RecDescent' => 'v1.90.0',
-    'Scalar::Util' => '0',
     'Software::License' => 0,
-    'Term::ReadLine' => '0',
-    'Text::Autoformat' => '0',
-    'Text::Diff' => '0',
     'namespace::autoclean' => '0'
   },
 

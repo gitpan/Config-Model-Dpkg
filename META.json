@@ -4,7 +4,7 @@
       "Dominique Dumont (dod at debian dot org)"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.132140",
    "license" : [
       "open_source"
    ],
@@ -16,14 +16,12 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "File::Copy::Recursive" : "0",
+            "Config::Model::Tester" : "2.043",
+            "File::Slurp" : "2.07",
             "Module::Build" : "0.34",
             "Path::Class" : "0",
-            "Probe::Perl" : "0",
-            "Test::Command" : "0.08",
             "Test::Differences" : "0",
             "Test::Exception" : "0",
-            "Test::File::Contents" : "0",
             "Test::Memory::Cycle" : "0",
             "Test::More" : "0",
             "Test::Warn" : "0.11"
@@ -38,53 +36,40 @@
          "requires" : {
             "AnyEvent" : "0",
             "AnyEvent::HTTP" : "0",
-            "Config::Model" : "2.026",
+            "Config::Model" : "2.041",
             "DB_File" : "0",
-            "File::HomeDir" : "0",
             "File::Path" : "2.07",
-            "Hash::Merge" : "0.12",
             "IO::File" : "0",
-            "List::MoreUtils" : "0",
             "Log::Log4perl" : "1.11",
             "Mouse" : "0",
             "Parse::RecDescent" : "v1.90.0",
-            "Scalar::Util" : "0",
             "Software::License" : "0",
-            "Term::ReadLine" : "0",
-            "Text::Autoformat" : "0",
-            "Text::Diff" : "0",
             "namespace::autoclean" : "0"
          }
       }
    },
    "provides" : {
       "Config::Model::Backend::Dpkg" : {
-         "file" : "lib/Config/Model/Backend/Dpkg.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Backend/Dpkg.pm"
       },
       "Config::Model::Backend::Dpkg::Control" : {
-         "file" : "lib/Config/Model/Backend/Dpkg/Control.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Backend/Dpkg/Control.pm"
       },
       "Config::Model::Backend::Dpkg::Copyright" : {
-         "file" : "lib/Config/Model/Backend/Dpkg/Copyright.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Backend/Dpkg/Copyright.pm"
       },
       "Config::Model::Backend::Dpkg::Patch" : {
-         "file" : "lib/Config/Model/Backend/Dpkg/Patch.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Backend/Dpkg/Patch.pm"
       },
       "Config::Model::Backend::DpkgSyntax" : {
-         "file" : "lib/Config/Model/Backend/DpkgSyntax.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Backend/DpkgSyntax.pm"
       },
       "Config::Model::Dpkg" : {
          "file" : "lib/Config/Model/Dpkg.pm",
-         "version" : "2.036"
+         "version" : "2.038"
       },
       "Config::Model::Dpkg::Dependency" : {
-         "file" : "lib/Config/Model/Dpkg/Dependency.pm",
-         "version" : 0
+         "file" : "lib/Config/Model/Dpkg/Dependency.pm"
       }
    },
    "release_status" : "stable",
@@ -98,5 +83,5 @@
       },
       "x_MailingList" : "https://lists.sourceforge.net/lists/listinfo/config-model-users"
    },
-   "version" : "2.036"
+   "version" : "2.038"
 }

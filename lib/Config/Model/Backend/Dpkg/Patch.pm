@@ -52,16 +52,14 @@ sub read {
     my ( $header, $diff ) = ( [],[] );
     my $target = $header;
     foreach my $l ( $patch_io->getlines ) {
-        given ($l) {
-            when (/^---/) { 
-                # beginning of quilt style patch
-                $target = $diff ;
-            }
-            when (/^===/) { 
-                # beginning of git diff style patch
-                push @$diff, pop @$header if $target eq $header; # get back the Index: line
-                $target = $diff ; 
-            }
+        if ( $l =~ /^---/ ) {
+            # beginning of quilt style patch
+            $target = $diff;
+        }
+        elsif ( $l =~ /^===/ ) {
+            # beginning of git diff style patch
+            push @$diff, pop @$header if $target eq $header;    # get back the Index: line
+            $target = $diff;
         }
         push @$target, $l;
     }

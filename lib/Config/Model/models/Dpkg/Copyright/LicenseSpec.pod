@@ -12,7 +12,7 @@ Stand-alone license paragraph. This paragraph is used to describe licenses which
 
 =head2 text
 
-Full license text.I<< Optional. Type string.  >>
+Full license text.I<< Optional. Type string.  >> 
 
 =head1 SEE ALSO
 

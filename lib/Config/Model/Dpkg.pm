@@ -1,6 +1,6 @@
 package Config::Model::Dpkg;
 
-our $VERSION='2.036';
+our $VERSION='2.038';
 
 1;
 
@@ -74,6 +74,14 @@ if L<Fuse> is installed (Linux only)
 
 =back
 
+=head1 BUGS
+
+Config::Model design does not really cope well with a some detail of
+L<Debian patch header specification|http://dep.debian.net/deps/dep3/> (aka DEP-3).
+Description and subject are both authorized, but only B<one> of them is
+required and using the 2 is forbidden. So, both fields are accepted,
+but subject is stored as description in the configuration tree.
+C<cme fix> or C<cme edit> will write back a description field.
 
 =head1 AUTHOR
 

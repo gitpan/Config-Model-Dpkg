@@ -27,23 +27,23 @@ To upgrade your file from an old spec, run:
 
 =head2 Format
 
-URI of the format specification.I<< Mandatory. Type uniline. default: 'http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'.  >>
+URI of the format specification.I<< Mandatory. Type uniline. default: 'http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'.  >> 
 
 =head2 Upstream-Name
 
-The name upstream uses for the software.I<< Optional. Type uniline.  >>
+The name upstream uses for the software.I<< Optional. Type uniline.  >> 
 
 Note: Upstream-Name is migrated with 'C<$name>' and with $name => "C<- Name>"
 
 =head2 Upstream-Contact
 
-The preferred address(es) to reach the upstream project. May be free-form text, but by convention will usually be written as a list of RFC5822 addresses or URIs.I<< Optional. Type list of uniline.  >>
+The preferred address(es) to reach the upstream project. May be free-form text, but by convention will usually be written as a list of RFC5822 addresses or URIs.I<< Optional. Type list of uniline.  >> 
 
 Note: Upstream-Contact values are migrated from '- Upstream-Maintainer'
 
 =head2 Source
 
-An explanation from where the upstream source came from. Typically this would be a URL, but it might be a free-form explanation. The Debian Policy, 12.5 requires this information unless there are no upstream sources, which is mainly the case for native Debian packages. If the upstream source has been modified to remove non-free parts, that should be explained in this field.I<< Optional. Type string.  >>
+An explanation from where the upstream source came from. Typically this would be a URL, but it might be a free-form explanation. The Debian Policy, 12.5 requires this information unless there are no upstream sources, which is mainly the case for native Debian packages. If the upstream source has been modified to remove non-free parts, that should be explained in this field.I<< Optional. Type string.  >> 
 
 Note: Source is migrated with 
 
@@ -53,59 +53,59 @@ and with $older => "C<- Original-Source-Location>", $old => "C<- Upstream-Source
 
 =head2 Disclaimer
 
-This field can be used in the case of non-free and contrib packages (see [Policy 12.5]( http://www.debian.org/doc/debian-policy/ch-docs.html#s-copyrightfile))I<< Optional. Type string.  >>
+This field can be used in the case of non-free and contrib packages (see [Policy 12.5]( http://www.debian.org/doc/debian-policy/ch-docs.html#s-copyrightfile))I<< Optional. Type string.  >> 
 
 =head2 Comment
 
-This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.I<< Optional. Type string.  >>
+This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.I<< Optional. Type string.  >> 
 
 Note: Comment is migrated with 'C<$old>' and with $old => "C<- X-Comment>"
 
 =head2 Copyright
 
-Copyright information for the package as a whole, which may be different or simplified from a combination of all the per-file copyright information. See also Copyright below in the Files paragraph section.I<< Optional. Type string.  >>
+Copyright information for the package as a whole, which may be different or simplified from a combination of all the per-file copyright information. See also Copyright below in the Files paragraph section.I<< Optional. Type string.  >> 
 
 =head2 Files
 
-Patterns indicating files having the same license and sharing copyright holders. See "File patterns" below. I<< Optional. Type hash of node.  >>
+Patterns indicating files having the same license and sharing copyright holders. See "File patterns" below. I<< Optional. Type hash of node of class L<Dpkg::Copyright::Content|Config::Model::models::Dpkg::Copyright::Content> .  >> 
 
 =head2 Global-License
 
-I<< Optional. Type node.  >>
+I<< Optional. Type node of class L<Dpkg::Copyright::GlobalLicense|Config::Model::models::Dpkg::Copyright::GlobalLicense> .  >> 
 
 =head2 Format-Specification
 
-B<Deprecated> I<< Optional. Type uniline.  >>
+B<Deprecated> I<< Optional. Type uniline.  >> 
 
 =head2 Name
 
-B<Deprecated> I<< Optional. Type uniline.  >>
+B<Deprecated> I<< Optional. Type uniline.  >> 
 
 =head2 Maintainer
 
-Line(s) containing the preferred address(es) to reach current upstream maintainer(s). May be free-form text, but by convention will usually be written as a list of RFC2822 addresses or URIs.B<Deprecated> I<< Optional. Type list of uniline.  >>
+Line(s) containing the preferred address(es) to reach current upstream maintainer(s). May be free-form text, but by convention will usually be written as a list of RFC2822 addresses or URIs.B<Deprecated> I<< Optional. Type list of uniline.  >> 
 
 =head2 Upstream-Maintainer
 
-B<Deprecated> I<< Optional. Type list of uniline.  >>
+B<Deprecated> I<< Optional. Type list of uniline.  >> 
 
 Note: Upstream-Maintainer values are migrated from '- Maintainer'
 
 =head2 Upstream-Source
 
-B<Deprecated> I<< Optional. Type string.  >>
+B<Deprecated> I<< Optional. Type string.  >> 
 
 =head2 Original-Source-Location
 
-B<Deprecated> I<< Optional. Type string.  >>
+B<Deprecated> I<< Optional. Type string.  >> 
 
 =head2 License
 
-I<< Optional. Type hash of node.  >>
+I<< Optional. Type hash of node of class L<Dpkg::Copyright::LicenseSpec|Config::Model::models::Dpkg::Copyright::LicenseSpec> .  >> 
 
 =head2 X-Comment
 
-B<Deprecated> I<< Optional. Type string.  >>
+B<Deprecated> I<< Optional. Type string.  >> 
 
 =head1 SEE ALSO
 
