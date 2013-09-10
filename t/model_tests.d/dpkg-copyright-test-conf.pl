@@ -102,7 +102,7 @@ $skip = ( $@ or not -r '/etc/debian_version') ? 1 : 0 ;
             Format => "http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/", 
             'Files:"*" Copyright' => 'Copyright 1998 John Doe <jdoe@example.com>',
             'Files:"debian/*" License short_name' => 'other',
-            },
+        },
     },
     {
         # test nb 8
@@ -168,7 +168,14 @@ and Lesser General Public License version 2.1 can be found respectively in
             'License:Perl Comment',"On Debian systems, the complete text of the Artistic License can be
 found in ‘/usr/share/common-licenses/Artistic’, and the complete text of
 the latest version of the GNU General Public License version 1 can be found
-in ‘/usr/share/common-licenses/GPL-1’." } , 
+in ‘/usr/share/common-licenses/GPL-1’.",
+            'Files:"lib/Bio/Graphics/Glyph/rndrect.pm 
+      lib/Bio/Graphics/Glyph/splice_site.pm
+ lib/Bio/Graphics/Glyph/extending_arrow.pm" License short_name' => 'Perl',
+            'Files:"lib/Bio/Graphics/FeatureDir.pm lib/Bio/Graphics/Glyph/pairplot.pm lib/Bio/Graphics/Glyph/generic.pm" License short_name' => "GPL-1+ or Artistic-2.0",
+            'Files:lib/Bio/Graphics/Layout.pm License short_name' => "LGPL-2.1+ or Artistic-2.0",
+    } ,
+        
     },       
     
     {
@@ -200,6 +207,42 @@ in ‘/usr/share/common-licenses/GPL-1’." } ,
         name => 'oar',
         'File:"sources/extra/orpheus/modules/lua-signal/lsignal.c" License short_name'
             => 'MIT/X11'
+    },
+    {
+        # Debian bug #721832
+        name => 'white-space' ,
+        load_warnings => [ (qr/deprecated/) x 1 ],
+
+        check => {
+            'License:MPL-1.1 text' => "[MPL-1.1 LICENSE TEXT]",
+            'Files:"*" License short_name' => "MPL-1.1",
+            'Files:"src/js/fdlibm/*" License short_name'   => "MPL-1.1",
+        },
+        file_contents_like => {
+            'debian/copyright' => qr/Copyright:\n/ ,
+        },
+        file_contents_unlike => {
+            'debian/copyright' =>  [ qr/Copyright:\s+\n/ , qr/\n\n$/, qr/Copyright:\s*\nLicense/ ],
+        }
+    },
+    {
+        # Debian bug #721670
+        name => 'double-copyright' ,
+
+        check => {
+            'Files:"*" Copyright' => "(c) 2000-2001 Andrew Ho\n"
+            . "(c) 2004 David Coppit\n"
+            . "The original code (written before April 20, 2001) was written [...]",
+        },
+    },
+    {
+        # Debian bug #721672
+        name => 'file-instead-of-files' ,
+
+        check => {
+            "Files:debian/patches/half_code_pod_errors.patch Copyright" =>
+            '2010, Frank Wiegand <fwie@cpan.org>',
+        },
     },
 );
 

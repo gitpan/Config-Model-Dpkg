@@ -29,9 +29,9 @@ Comment: This library is free software; you can redistribute it and/or modify
  scientifically appropriate.
 
 
-Files: lib/Bio/Graphics/Glyph/rndrect.pm
+Files: lib/Bio/Graphics/Glyph/rndrect.pm ,
        lib/Bio/Graphics/Glyph/splice_site.pm
-       lib/Bio/Graphics/Glyph/extending_arrow.pm
+       , lib/Bio/Graphics/Glyph/extending_arrow.pm
 Copyright: © 2001 Berkeley Drosophila Genome Project
 License: Perl
 
@@ -62,13 +62,13 @@ License: GPL-1+ or Artistic-2.0
 Author: Fiona Cunningham <cunningh@cshl.edu> in Lincoln Stein's lab <steinl@cshl.edu>
 
 
-Files: lib/Bio/Graphics/FeatureDir.pm lib/Bio/Graphics/Glyph/pairplot.pm lib/Bio/Graphics/Glyph/generic.pm
+Files: lib/Bio/Graphics/FeatureDir.pm, lib/Bio/Graphics/Glyph/pairplot.pm ,,   lib/Bio/Graphics/Glyph/generic.pm
 Copyright: 2008,2009,2010 Ontario Institute for Cancer Research
            2001,2004 Cold Spring Harbor Laboratory
 License: GPL-1+ or Artistic-2.0
 
 
-Files: lib/Bio/Graphics/Layout.pm
+Files: lib/Bio/Graphics/Layout.pm,
 Copyright: © 2007-2010 The Evolutionary Software Foundation
 License: LGPL-2.1+ or Artistic-2.0
 

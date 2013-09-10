@@ -49,7 +49,7 @@ Note: Source is migrated with
 
  $old || $older ;
 
-and with $older => "C<- Original-Source-Location>", $old => "C<- Upstream-Source>"
+and with $old => "C<- Upstream-Source>", $older => "C<- Original-Source-Location>"
 
 =head2 Disclaimer
 

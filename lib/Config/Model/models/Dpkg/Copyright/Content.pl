@@ -3,24 +3,19 @@
     'accept' => [
       '.*',
       {
-        'value_type' => 'string',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'string'
       }
-    ],
-    'name' => 'Dpkg::Copyright::Content',
-    'copyright' => [
-      '2010,2011 Dominique Dumont'
     ],
     'author' => [
       'Dominique Dumont'
     ],
-    'license' => 'LGPL2',
+    'copyright' => [
+      '2010,2011 Dominique Dumont'
+    ],
     'element' => [
       'Copyright',
       {
-        'value_type' => 'string',
-        'mandatory' => '1',
-        'type' => 'leaf',
         'description' => 'One or more free-form copyright statement(s), one per line, that apply to the files matched by the above pattern. If a work has no copyright holder (i.e., it is in the public domain), that information should be recorded here.
 
 The Copyright field collects all relevant copyright notices for the files of this paragraph. Not all copyright notices may apply to every individual file, and years of publication for one copyright holder may be gathered together. For example, if file A has:
@@ -35,22 +30,25 @@ the Copyright field for a stanza covering both file A and file B need contain on
 
       Copyright 2008 John Smith Copyright 2009, 2010 Angela Watts
 
-The Copyright field may contain the original copyright statement copied exactly (including the word Copyright), or it can shorten the text, as long as it does not sacrifice information. Examples in this specification use both forms.'
+The Copyright field may contain the original copyright statement copied exactly (including the word Copyright), or it can shorten the text, as long as it does not sacrifice information. Examples in this specification use both forms.',
+        'mandatory' => '1',
+        'type' => 'leaf',
+        'value_type' => 'string'
       },
       'License',
       {
-        'type' => 'node',
-        'config_class_name' => 'Dpkg::Copyright::FileLicense'
+        'config_class_name' => 'Dpkg::Copyright::FileLicense',
+        'type' => 'node'
       },
       'License-Alias',
       {
-        'value_type' => 'uniline',
         'status' => 'deprecated',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Comment',
       {
-        'value_type' => 'string',
+        'description' => 'This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.',
         'migrate_from' => {
           'formula' => '$old',
           'variables' => {
@@ -58,15 +56,17 @@ The Copyright field may contain the original copyright statement copied exactly 
           }
         },
         'type' => 'leaf',
-        'description' => 'This field can provide additional information. For example, it might quote an e-mail from upstream justifying why the license is acceptable to the main archive, or an explanation of how this version of the package has been forked from a version known to be DFSG-free, even though the current upstream version is not.'
+        'value_type' => 'string'
       },
       'X-Comment',
       {
-        'value_type' => 'string',
         'status' => 'deprecated',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'string'
       }
-    ]
+    ],
+    'license' => 'LGPL2',
+    'name' => 'Dpkg::Copyright::Content'
   }
 ]
 ;

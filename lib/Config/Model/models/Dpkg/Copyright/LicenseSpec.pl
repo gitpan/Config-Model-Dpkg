@@ -1,29 +1,26 @@
 [
   {
-    'class_description' => 'Stand-alone license paragraph. This paragraph is used to describe licenses which are used somewhere else in the Files paragraph.',
     'accept' => [
       '.*',
       {
-        'value_type' => 'string',
+        'description' => 'license short_name. Example: GPL-1 LPL-2.1+',
         'type' => 'leaf',
-        'description' => 'license short_name. Example: GPL-1 LPL-2.1+'
+        'value_type' => 'string'
       }
-    ],
-    'name' => 'Dpkg::Copyright::LicenseSpec',
-    'copyright' => [
-      '2010',
-      '2011 Dominique Dumont'
     ],
     'author' => [
       'Dominique Dumont'
     ],
-    'license' => 'LGPL2',
+    'class_description' => 'Stand-alone license paragraph. This paragraph is used to describe licenses which are used somewhere else in the Files paragraph.',
+    'copyright' => [
+      '2010',
+      '2011 Dominique Dumont'
+    ],
     'element' => [
       'text',
       {
         'compute' => {
-          'undef_is' => '\'\'',
-          'use_eval' => '1',
+          'allow_override' => '1',
           'formula' => 'require Software::LicenseUtils ;
 my $h = { 
   short_name => &index( - ), 
@@ -34,13 +31,16 @@ my $h = {
 eval {
   Software::LicenseUtils->new_from_short_name($h)->summary ; 
 } ;',
-          'allow_override' => '1'
+          'undef_is' => '\'\'',
+          'use_eval' => '1'
         },
-        'value_type' => 'string',
+        'description' => 'Full license text.',
         'type' => 'leaf',
-        'description' => 'Full license text.'
+        'value_type' => 'string'
       }
-    ]
+    ],
+    'license' => 'LGPL2',
+    'name' => 'Dpkg::Copyright::LicenseSpec'
   }
 ]
 ;

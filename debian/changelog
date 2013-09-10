@@ -1,3 +1,33 @@
+libconfig-model-dpkg-perl (2.040) unstable; urgency=low
+
+  * All: fix white space and extraneous line issue (Closes: #721832)
+  * dpkg-copyright:
+    * skip empty-ish license
+    * append second occurrence of an entry (Closes: #721670)
+    * convert File section into Files (Closes: #721672)
+  * dpkg-control:
+    + added support for XS-Testsuite (Thanks Stig) (Closes: #721663)
+    * added tests for xs-testsuite (Thanks Stig)
+  * control: BD on libconfig-model-tester >= 2.044 to test white space fix
+
+ -- Dominique Dumont <dod@debian.org>  Sun, 08 Sep 2013 21:03:40 +0200
+
+libconfig-model-dpkg-perl (2.039) unstable; urgency=low
+
+  * Team upload.
+
+  [ Dominique Dumont ]
+  * Dpkg::Copyright: clean up comma from Files line
+
+  [ gregor herrmann ]
+  * Switch order of alternative (build) dependencies after Perl 5.18
+    upload to unstable.
+  * Remove version from libconfig-model-tester-perl build dependency.
+    Nothing older in the archive. This fix was brought to the audience by
+    cme and libconfig-model-dpkg-perl itself.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 02 Sep 2013 21:36:44 +0200
+
 libconfig-model-dpkg-perl (2.038) unstable; urgency=low
 
   * Fix alternate dependency corner case (Closes: #719225)

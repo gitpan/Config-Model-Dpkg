@@ -1,6 +1,6 @@
 package Config::Model::Dpkg;
 
-our $VERSION='2.038';
+our $VERSION='2.040';
 
 1;
 

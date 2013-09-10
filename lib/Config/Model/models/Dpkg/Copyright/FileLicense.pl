@@ -1,17 +1,22 @@
 [
   {
-    'name' => 'Dpkg::Copyright::FileLicense',
-    'copyright' => [
-      '2010,2011 Dominique Dumont'
-    ],
     'author' => [
       'Dominique Dumont'
     ],
-    'license' => 'LGPL2',
+    'copyright' => [
+      '2010,2011 Dominique Dumont'
+    ],
     'element' => [
       'short_name',
       {
-        'value_type' => 'uniline',
+        'description' => 'abbreviated name for the license. If empty, it is given the default 
+value \'other\'. Only one license per file can use this default value; if there is more 
+than one license present in the package without a standard short name, an arbitrary 
+short name may be assigned for these licenses. These arbitrary names are only guaranteed 
+to be unique within a single copyright file.
+
+The name given must match a License described in License element in root node
+',
         'grammar' => 'check: <rulevar: local $found = 0> <rulevar: local $ok = 1 >
 check: license alternate(s?) <reject: $text or not $found or not $ok >
 alternate: comma(?) oper license 
@@ -30,6 +35,49 @@ license: /[^\\s,]+/i
          ${$arg[1]} .= "license $abbrev is not declared in main License section. Expected ".join(" ",$elt->fetch_all_indexes) ;
      }
    } ',
+        'help' => {
+          'Apache' => 'Apache license. For versions, consult the Apache_Software_Foundation.',
+          'Artistic' => 'Artistic license. For versions, consult the Perl_Foundation',
+          'BSD-2-clause' => 'Berkeley software distribution license, 2-clause version',
+          'BSD-3-clause' => 'Berkeley software distribution license, 3-clause version',
+          'BSD-4-clause' => 'Berkeley software distribution license, 4-clause version',
+          'CC-BY' => 'Creative Commons Attribution license',
+          'CC-BY-NC' => 'Creative Commons Attribution Non-Commercial',
+          'CC-BY-NC-ND' => 'Creative Commons Attribution Non-Commercial No Derivatives',
+          'CC-BY-NC-SA' => 'Creative Commons Attribution Non-Commercial Share Alike',
+          'CC-BY-ND' => 'Creative Commons Attribution No Derivatives',
+          'CC-BY-SA' => 'Creative Commons Attribution Share Alike license',
+          'CC0' => 'Creative Commons Universal waiver',
+          'CDDL' => 'Common Development and Distribution License. For versions, consult Sun Microsystems.',
+          'CPL' => 'IBM Common Public License. For versions, consult the IBM_Common_Public License_(CPL)_Frequently_asked_questions.',
+          'EFL' => 'The Eiffel Forum License. For versions, consult the Open_Source_Initiative',
+          'Expat' => 'The Expat license',
+          'FreeBSD' => 'FreeBSD Project license',
+          'GFDL' => 'GNU Free Documentation License',
+          'GFDL-NIV' => 'GNU Free Documentation License, with no invariant sections',
+          'GPL' => 'GNU General Public License',
+          'ISC' => 'Internet_Software_Consortium\'s license, sometimes also known as the OpenBSD License',
+          'LGPL' => 'GNU Lesser General Public License, (GNU Library General Public License for versions lower than 2.1)',
+          'LPPL' => 'LaTeX Project Public License',
+          'MPL' => 'Mozilla Public License. For versions, consult Mozilla.org',
+          'Perl' => 'Perl license (equates to "GPL-1+ or Artistic-1")',
+          'Python-CNRI' => 'Python Software Foundation license. For versions, consult the Python_Software Foundation',
+          'QPL' => 'Q Public License',
+          'W3C' => 'W3C Software License. For more information, consult the W3C IntellectualRights FAQ and the 20021231 W3C_Software_notice_and_license',
+          'ZLIB' => 'zlib/libpng_license',
+          'Zope' => 'Zope Public License. For versions, consult Zope.org'
+        },
+        'migrate_from' => {
+          'formula' => '$replace{$alias}',
+          'replace' => {
+            'Perl' => 'Artistic or GPL-1+'
+          },
+          'variables' => {
+            'alias' => '- - License-Alias'
+          }
+        },
+        'type' => 'leaf',
+        'value_type' => 'uniline',
         'warp' => {
           'rules' => [
             '&location !~ /Global/',
@@ -37,61 +85,11 @@ license: /[^\\s,]+/i
               'mandatory' => '1'
             }
           ]
-        },
-        'help' => {
-          'Zope' => 'Zope Public License. For versions, consult Zope.org',
-          'MPL' => 'Mozilla Public License. For versions, consult Mozilla.org',
-          'LGPL' => 'GNU Lesser General Public License, (GNU Library General Public License for versions lower than 2.1)',
-          'Perl' => 'Perl license (equates to "GPL-1+ or Artistic-1")',
-          'Artistic' => 'Artistic license. For versions, consult the Perl_Foundation',
-          'CC-BY' => 'Creative Commons Attribution license',
-          'ZLIB' => 'zlib/libpng_license',
-          'Expat' => 'The Expat license',
-          'EFL' => 'The Eiffel Forum License. For versions, consult the Open_Source_Initiative',
-          'BSD-3-clause' => 'Berkeley software distribution license, 3-clause version',
-          'LPPL' => 'LaTeX Project Public License',
-          'CC-BY-NC-SA' => 'Creative Commons Attribution Non-Commercial Share Alike',
-          'BSD-4-clause' => 'Berkeley software distribution license, 4-clause version',
-          'CC-BY-SA' => 'Creative Commons Attribution Share Alike license',
-          'GPL' => 'GNU General Public License',
-          'GFDL' => 'GNU Free Documentation License',
-          'CC0' => 'Creative Commons Universal waiver',
-          'Python-CNRI' => 'Python Software Foundation license. For versions, consult the Python_Software Foundation',
-          'FreeBSD' => 'FreeBSD Project license',
-          'CC-BY-NC' => 'Creative Commons Attribution Non-Commercial',
-          'CDDL' => 'Common Development and Distribution License. For versions, consult Sun Microsystems.',
-          'ISC' => 'Internet_Software_Consortium\'s license, sometimes also known as the OpenBSD License',
-          'CC-BY-NC-ND' => 'Creative Commons Attribution Non-Commercial No Derivatives',
-          'GFDL-NIV' => 'GNU Free Documentation License, with no invariant sections',
-          'CPL' => 'IBM Common Public License. For versions, consult the IBM_Common_Public License_(CPL)_Frequently_asked_questions.',
-          'CC-BY-ND' => 'Creative Commons Attribution No Derivatives',
-          'BSD-2-clause' => 'Berkeley software distribution license, 2-clause version',
-          'W3C' => 'W3C Software License. For more information, consult the W3C IntellectualRights FAQ and the 20021231 W3C_Software_notice_and_license',
-          'QPL' => 'Q Public License',
-          'Apache' => 'Apache license. For versions, consult the Apache_Software_Foundation.'
-        },
-        'migrate_from' => {
-          'replace' => {
-            'Perl' => 'Artistic or GPL-1+'
-          },
-          'formula' => '$replace{$alias}',
-          'variables' => {
-            'alias' => '- - License-Alias'
-          }
-        },
-        'type' => 'leaf',
-        'description' => 'abbreviated name for the license. If empty, it is given the default 
-value \'other\'. Only one license per file can use this default value; if there is more 
-than one license present in the package without a standard short name, an arbitrary 
-short name may be assigned for these licenses. These arbitrary names are only guaranteed 
-to be unique within a single copyright file.
-
-The name given must match a License described in License element in root node
-'
+        }
       },
       'exception',
       {
-        'value_type' => 'uniline',
+        'description' => 'License exception',
         'help' => {
           'Font' => 'The GPL "Font" exception refers to the text added to the license notice of each file as specified at How_does_the_GPL_apply_to_fonts?. The precise text corresponding to this exception is:
 As a special exception, if you create a document which uses this
@@ -119,16 +117,18 @@ exception statement from all source files in the program, then also
 delete it here.'
         },
         'type' => 'leaf',
-        'description' => 'License exception'
+        'value_type' => 'uniline'
       },
       'full_license',
       {
-        'value_type' => 'string',
-        'type' => 'leaf',
         'description' => 'if left blank here, the file must include a stand-alone License section matching each license short name listed on the first line (see the Standalone License Section section). Otherwise, this field should either include the full text of the license(s) or include a pointer to the license file under /usr/share/common-licenses. This field should include all text needed in order to fulfill both Debian Policy requirement for including a copy of the software distribution license, and any license requirements to include warranty disclaimers or other notices with the binary package.
-'
+',
+        'type' => 'leaf',
+        'value_type' => 'string'
       }
-    ]
+    ],
+    'license' => 'LGPL2',
+    'name' => 'Dpkg::Copyright::FileLicense'
   }
 ]
 ;

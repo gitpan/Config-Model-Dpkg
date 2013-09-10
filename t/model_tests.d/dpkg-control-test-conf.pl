@@ -161,6 +161,13 @@ providing the following file:
             'binary:libfast-xs-ruby XB-Ruby-Versions' => '${ruby:Versions}',
         },
     },
+    {
+        # test for XS-Testsuite field
+        name => 'xs-testsuite',
+        check => {
+            'source XS-Testsuite' => 'autopkgtest',
+        },
+    },
 );
 
 my $cache_file = 't/model_tests.d/dependency-cache.txt';

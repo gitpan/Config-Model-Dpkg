@@ -48,6 +48,10 @@ area/section if the package is in the contrib or non-free archive areas.
 
 I<< Optional. Type uniline.  >> 
 
+=head2 XS-Testsuite - name of the non regression test suite
+
+Enable a testsuite to be used with this package. Currently only the 'autopkgtest' name is allowed. For more details see L<README.package-tests|http://anonscm.debian.org/gitweb/?p=autopkgtest/autopkgtest.git;f=doc/README.package-tests;hb=HEAD>I<< Optional. Type uniline.  >> 
+
 =head2 XS-Autobuild - Allow automatic build of non-free or contrib package
 
 Read the full description from 

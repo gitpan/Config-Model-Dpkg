@@ -3,107 +3,107 @@
     'accept' => [
       'Bug-.*',
       {
+        'accept_after' => 'Bug',
         'cargo' => {
-          'value_type' => 'uniline',
-          'type' => 'leaf'
+          'type' => 'leaf',
+          'value_type' => 'uniline'
         },
-        'type' => 'list',
-        'accept_after' => 'Bug'
+        'type' => 'list'
       }
     ],
-    'read_config' => [
-      {
-        'backend' => 'Dpkg::Patch',
-        'config_dir' => 'debian/patches'
-      }
-    ],
-    'name' => 'Dpkg::Patch',
     'element' => [
       'Synopsis',
       {
-        'warn_unless' => {
-          'empty' => {
-            'msg' => 'Empty synopsis',
-            'fix' => '$_ = ucfirst( $self->parent->index_value )  ;
-s/-/ /g;
-',
-            'code' => 'defined $_ && /\\w/ ? 1 : 0 ;'
-          }
-        },
+        'summary' => 'short description of the patch',
+        'type' => 'leaf',
         'value_type' => 'uniline',
         'warn_if_match' => {
           '.{60,}' => {
             'msg' => 'Synopsis is too long. '
           }
         },
-        'summary' => 'short description of the patch',
-        'type' => 'leaf'
+        'warn_unless' => {
+          'empty' => {
+            'code' => 'defined $_ && /\\w/ ? 1 : 0 ;',
+            'fix' => '$_ = ucfirst( $self->parent->index_value )  ;
+s/-/ /g;
+',
+            'msg' => 'Empty synopsis'
+          }
+        }
       },
       'Description',
       {
-        'value_type' => 'string',
+        'description' => 'verbose explanation of the patch and its history.',
         'type' => 'leaf',
-        'description' => 'verbose explanation of the patch and its history.'
+        'value_type' => 'string'
       },
       'Subject',
       {
-        'value_type' => 'string',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'string'
       },
       'Bug',
       {
         'cargo' => {
-          'value_type' => 'uniline',
-          'type' => 'leaf'
+          'type' => 'leaf',
+          'value_type' => 'uniline'
         },
         'type' => 'list'
       },
       'Forwarded',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Author',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Origin',
       {
-        'value_type' => 'string',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'string'
       },
       'From',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Reviewed-by',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Acked-by',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Last-Update',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'Applied-Upstream',
       {
-        'value_type' => 'uniline',
-        'type' => 'leaf'
+        'type' => 'leaf',
+        'value_type' => 'uniline'
       },
       'diff',
       {
-        'value_type' => 'string',
+        'description' => 'This element contains the diff that will be used to patch the source. Do not modify.',
         'summary' => 'actual patch',
         'type' => 'leaf',
-        'description' => 'This element contains the diff that will be used to patch the source. Do not modify.'
+        'value_type' => 'string'
+      }
+    ],
+    'name' => 'Dpkg::Patch',
+    'read_config' => [
+      {
+        'backend' => 'Dpkg::Patch',
+        'config_dir' => 'debian/patches'
       }
     ]
   }

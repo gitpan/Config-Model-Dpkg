@@ -69,6 +69,14 @@ sub read {
         my %section = map { (lc($_),$h{$_}) ; } keys %h ;
         $logger->debug("section nb $section_nb has fields: ".join(' ',keys %section)) ;
 
+        # Some people use 'File' to declare copyright info for a sinble file.
+        # While this is correct grammatically, it tends to be PITA
+        if (my $file_section = delete $section{file}) {
+            $logger->warn("Found File section. This one is converted in Files section (mind the plural)");
+            $file_section->[2] = 'changed file section into files section' ;
+            $section{files} //= $file_section ; # no clobber of good section
+        }
+
         if ( defined $section{copyright} and not defined $section{files}
              and not defined $file_paragraph{'*'} 
             ) {
@@ -85,7 +93,7 @@ sub read {
         }
 
         if (defined $section{licence}) {
-            $logger->warn("Found UK spelling for license. It will be converted to US spellingLicense");
+            $logger->warn("Found UK spelling for license. It will be converted to US spelling");
             $section{license} = delete $section{licence} ;# FIXME: use notify_change
             $section{license}[2] = 'changed uk spelling for license (was licence)'; # is altered
         } 
@@ -95,6 +103,11 @@ sub read {
             if ($logger->is_debug) {
                 my $a_str = $a ? "altered: '$a' ":'' ;
                 $logger->debug("Found Files paragraph line $l, $a_str($v)");
+            }
+            if ($v =~ /,/) {
+                $logger->warn("Found comma in Files line, cleaning up");
+                $v =~ s/ *,+[ \t]*/ /g;
+                $v =~ s/^\s*|\s*$//g;
             }
             $file_paragraph{$v} = $section_ref ;
             push @file_names, $v ;
@@ -222,15 +235,23 @@ sub read {
 sub _store_line_based_list {
     my ($object,$v,$check) = @_ ;
     my @v = grep {length($_) } split /\s*\n\s*/,$v ;
-    $logger->debug("_store_line_based_list with check $check on ".$object->name." = ('".join("','",@v),"')");
-    $object->store_set(\@v, check => $check);
+    $logger->debug("_store_line_based_list with check $check on ".$object->name." = ('".join("','",@v),"')")
+        if $logger->is_debug;
+    $object->push_x(values => \@v, check => $check);
 }
 
 sub _store_text_no_synopsis {
     my ($object,$v,$check) = @_ ;
     #$v =~ s/^\s*\n// ;
     chomp $v ;
-    $logger->debug("_store_text_no_synopsis with check $check on ".$object->name." = '$v'");
+    my $old = $object->fetch(check => 'no');
+    if ($old) {
+        $logger->warn("double entry for ",$object->name,", appending value");
+        $v = $old."\n".$v;
+    }
+    $logger->debug("_store_text_no_synopsis with check $check on ".$object->name." = '$v'")
+        if $logger->is_debug;
+
     $object->store(value => $v, check => $check) ; 
 }
 
@@ -242,19 +263,13 @@ sub _store_line {
     $object->store(value => $v, check => $check) ; 
 }
 
-#
-# New subroutine "_store_license_info" extracted - Fri Apr 27 13:59:18 2012.
-#
-#
-# New subroutine "_store_file_info" extracted - Fri Apr 27 14:07:11 2012.
-#
 sub _store_file_info {
     my ($object,$target_name,$key, $v, $check) = @_;
 
     my $target = $object->fetch_element($target_name) ;
     my $type = $target->get_type ;
     my $dispatcher = $type eq 'leaf' ? $target->value_type : $type ;
-    my $f =  $store_dispatch{$dispatcher} || die "unknown dispatcher for $key";
+    my $f =  $store_dispatch{$dispatcher} || die "unknown dispatcher for element type '$key'";
     $f->($target,$v,$check) ; 
     $target->notify_change(note => $a, really => 1 ) if $a ;
 }
@@ -277,6 +292,7 @@ sub _store_file_license {
     my ($lic_object, $v, $check) = @_ ;
 
     chomp $v ;
+    return unless $v =~ /\S/; # skip empty-ish value
     $logger->debug("_store_file_license check $check called on ".$lic_object->name." = $v");
     my ( $lic_line, $lic_text ) = split /\n/, $v, 2 ;
     $lic_line =~ s/\s+$//;

@@ -60,7 +60,10 @@ t/model_tests.d/dpkg-control-examples/t3
 t/model_tests.d/dpkg-control-examples/t4
 t/model_tests.d/dpkg-control-examples/t5
 t/model_tests.d/dpkg-control-examples/t6
+t/model_tests.d/dpkg-control-examples/xs-testsuite
 t/model_tests.d/dpkg-control-test-conf.pl
+t/model_tests.d/dpkg-copyright-examples/double-copyright
+t/model_tests.d/dpkg-copyright-examples/file-instead-of-files
 t/model_tests.d/dpkg-copyright-examples/libpadre-plugin-perltidy-perl
 t/model_tests.d/dpkg-copyright-examples/migrate-license-alias
 t/model_tests.d/dpkg-copyright-examples/oar
@@ -79,6 +82,7 @@ t/model_tests.d/dpkg-copyright-examples/t6
 t/model_tests.d/dpkg-copyright-examples/t7
 t/model_tests.d/dpkg-copyright-examples/t8
 t/model_tests.d/dpkg-copyright-examples/t9
+t/model_tests.d/dpkg-copyright-examples/white-space
 t/model_tests.d/dpkg-copyright-test-conf.pl
 t/model_tests.d/dpkg-examples/libversion/debian/changelog
 t/model_tests.d/dpkg-examples/libversion/debian/compat

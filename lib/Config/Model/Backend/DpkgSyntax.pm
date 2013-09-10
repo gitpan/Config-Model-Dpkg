@@ -38,7 +38,7 @@ sub parse_dpkg_lines {
     my $line_nb = 1 ;
     my $section_line = 1 ;
     
-    # list of list ( $line_nb_nb, section, ... ) wheere section is
+    # list of list ( $line_nb_nb, section, ... ) where section is
     # [keyword, [ value, line_nb, altered , comment ] ])
     my @res ; 
     
@@ -140,48 +140,73 @@ sub _store_line {
     
 }
 
-# input is [ section [ keyword => value | value_list ] ]
+# input is [ section [ keyword => value | value_list_ref ] ]
 sub write_dpkg_file {
     my ($self, $ioh, $array_ref,$list_sep) = @_ ;
 
-    map { $self->write_dpkg_section($ioh,$_,$list_sep) } @$array_ref ;
+    my @lines = $self->format_dpkg_section(shift @$array_ref,$list_sep) ;
+
+    foreach my $section (@$array_ref) {
+        push @lines, '', $self->format_dpkg_section($section,$list_sep) ;
+    }
+    $ioh->print ( join("\n", @lines ), "\n");
 }
 
-sub write_dpkg_section {
-    my ($self, $ioh, $array_ref,$list_sep) = @_ ;
+# input is [ may_be_comment, keyword => value | value_list_ref, ... ]
+sub format_dpkg_section {
+    my ($self, $array_ref,$list_sep) = @_ ;
+
+    my @lines ;
 
     my $i = 0;
     foreach (my $i=0; $i < @$array_ref; $i += 2 ) {
         while ($array_ref->[$i] =~ /^#/) {
             # print comment
-            $ioh->print($array_ref->[$i++],"\n") ; 
+            push @lines, $array_ref->[$i++] ;
         }
         my $name  = $array_ref->[$i] ;
         my $value = $array_ref->[$i + 1];
-        my $label = "$name:" ;
+
         if (ref ($value)) {
-            $label .= ' ';
-            my $sep = $list_sep ? $list_sep  : ",\n" ;
-            $sep .= ' ' x length ($label) if $sep =~ /\n$/ ;
-            $ioh -> print ($label.join( $sep, @$value ) . "\n");
+            my $sep = $list_sep // ",\n" ;
+            $sep .= ' ' x (length ($name) + 2) if $sep =~ /\n$/ ;
+
+            my $line0 = $self->format_label_line($name, shift @$value);
+            push @lines, join ($sep, $line0, @$value ) ;
         }
         else {
-            $ioh->print ($label) ;
-            $self->write_dpkg_text($ioh,$value) ;
+            push @lines, $self->format_dpkg_text($name, $value) ;
         }
     }
-    $ioh->print("\n");
+
+    return @lines;
 }
 
 sub write_dpkg_text {
-     my ($self, $ioh, $text) = @_ ;
+    my ($self, $ioh, $text) = @_ ;
+    $ioh->print ( join("\n", $self->format_dpkg_text('',$text)), "\n" );
+}
+
+sub format_dpkg_text {
+    my ($self, $name, $text) = @_ ;
 
     return unless $text ;
     my @lines = split /\n/,$text ;
-    $ioh->print ( ' ' . shift (@lines) . "\n" ) ;
+    my $label_line = $self->format_label_line($name, shift @lines);
+
     foreach (@lines) {
-        $ioh->print ( /\S/ ? " $_\n" : " .\n") ;
+        s/^/ /gm; # insert leading white space
+        s/^\s*$/ ./gm ; # insert dot for empty lines
     }
+    return ($label_line, @lines) ;
+}
+
+sub format_label_line {
+    my ($self, $name, $v0) = @_ ;
+    return $v0 unless $name;
+    my $label_line = $name.":";
+    $label_line .= ' '.$v0 if $v0 =~ /\S/;
+    return $label_line;
 }
 
 1;
